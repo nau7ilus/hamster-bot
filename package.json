@@ -1,0 +1,37 @@
+{
+  "name": "hamster-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Hamster team",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon ./src/index.js",
+    "deploy": "node index.js"
+  },
+  "dependencies": {
+    "btoa": "^1.2.1",
+    "chalk": "^4.0.0",
+    "cors": "^2.8.5",
+    "discord.js": "^12.2.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "handlebars": "^4.7.6",
+    "luxon": "^1.23.0",
+    "mongoose": "^5.9.10",
+    "mongoose-auto-increment": "^5.0.1",
+    "morgan": "^1.10.0",
+    "path": "^0.12.7",
+    "url": "^0.11.0",
+    "util": "^0.12.2"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
+  }
+}
