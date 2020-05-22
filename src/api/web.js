@@ -4,7 +4,6 @@ const fetch = require('node-fetch');
 const btoa = require('btoa');
 
 const Route = require('../structures/Route');
-const EndpointUtils = require('../utils/EndpointUtils');
 
 const API_URL = 'https://discordapp.com/api';
 
@@ -41,15 +40,6 @@ module.exports = class WebRoute extends Route {
                     .json({ error: 'An error occurred while validating access token' });
             }
         });
-
-        // @me
-        router.get(
-            '/@me',
-            EndpointUtils.authenticate(this, false, true),
-            (req, res) => {
-                return res.json({ user: req.user, guilds: req.guilds });
-            }
-        );
 
         // Получение информации о боте
         router.get('/bot', async (req, res) => {
@@ -99,7 +89,7 @@ module.exports = class WebRoute extends Route {
 
     async _tokenRequest(code) {
         const creds = btoa(`629322882882863104:${process.env.DISCORD_SECRET}`);
-        const req = await fetch(`${API_URL}/oauth2/token?grant_type=authorization_code&code=${code}&redirect_uri=https://test.robo-hamster.ru`, {
+        const req = await fetch(`${API_URL}/oauth2/token?grant_type=authorization_code&code=${code}&redirect_uri=http://localhost:8080`, {
             method: 'POST',
             headers: { Authorization: `Basic ${creds}` }
         })

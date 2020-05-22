@@ -6,9 +6,10 @@ module.exports = new Command({
     name: 'help',
     description: 'Помощь по командам',
     usage: 'help <команда>',
-    aliases: ['h']
+    aliases: ['h'],
+    devOnly: true
 }, async (client, message, args) => {
-console.log(client.commands)
+    console.log(client.commands)
     const embed = new MessageEmbed()
         .setColor('#beff33')
     let command;

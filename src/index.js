@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 const { readFileSync } = require('fs');
-const { promisify } = require('util');
 require('dotenv/config');
 
 const Logger = require('./utils/Logger.js');
 const Client = require('./structures/Client.js');
 const Guild = require('./structures/models/Guild');
-const getSettings = promisify(Guild.find).bind(Guild);
 
 const LOCAL_DATA = {
     guilds: null,
@@ -44,7 +42,7 @@ mongoose.connect(process.env.DATABASE_URL, {
     useUnifiedTopology: true
 }, async (err) => {
     if (err) throw err;
-    Logger.log('База данных подключена', 'info');
-    LOCAL_DATA.guilds = await getSettings({});
+    Logger.info('База данных подключена');
+    LOCAL_DATA.guilds = await Guild.find({});
     client.setSettings(LOCAL_DATA.guilds)
 });

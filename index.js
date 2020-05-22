@@ -10,3 +10,8 @@ const manager = new ShardingManager('./src/index.js', {
 manager.spawn().then(() => {
     Logger.info(`Бот шардирован!`);
 });
+
+// var http = require("http");
+// setInterval(function() {
+//     http.get("http://api.robo-hamster.ru");
+// }, 300000);

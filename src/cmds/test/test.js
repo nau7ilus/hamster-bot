@@ -6,8 +6,7 @@ module.exports = new Command({
     aliases: ['t'],
     devOnly: true,
     guildOnly: true,
-    nsfw: true,
+    nsfw: false,
 }, async (client, message) => {
-    console.log(JSON.stringify(client.settings))
-    message.channel.send(JSON.stringify(client.settings));
+    message.channel.send(`иди нафиг`);
 });

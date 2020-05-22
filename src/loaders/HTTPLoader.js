@@ -25,10 +25,21 @@ module.exports = class HTTPLoader {
   }
 
   initializeHTTPServer(port = process.env.PORT || 3000) {
-    this.app = express();
-    this.app.use(cors());
+    let whitelist = ['http://localhost:8080', 'https://test.robo-hamster.ru', 'https://robo-hamster.ru']
+    let corsOptions = {
+      origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+          callback(null, true)
+        } else {
+          callback(null, false)
+        }
+      }
+    }
 
+    this.app = express();
+    this.app.use(cors(corsOptions));
     this.app.use(express.json());
+    this.app.disable('x-powered-by');
 
     this.app.use(
       morgan(

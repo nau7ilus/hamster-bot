@@ -13,11 +13,11 @@ module.exports = async (client) => {
 
 	let premiumGuilds = ['625036675059548220'];
 
-	console.log(client.guilds.cache.map(guild => {
+	console.log(client.guilds.cache.map(guild => 
 		// if (premiumGuilds.includes(guild.id)) guild.isPremium = true
 		// else 
-		guild.isPremium = false
-	}))
+		guild.name
+	))
 
 	setInterval(() => {
 		Logger.event('Время : ' + Logger.setColor('yellow', DateTime.local().toFormat('TT')));
