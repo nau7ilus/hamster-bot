@@ -28,11 +28,8 @@ module.exports = class HTTPLoader {
     let whitelist = ['http://localhost:8080', 'https://test.robo-hamster.ru', 'https://robo-hamster.ru']
     let corsOptions = {
       origin: function (origin, callback) {
-        if (whitelist.indexOf(origin) !== -1) {
-          callback(null, true)
-        } else {
-          callback(null, false)
-        }
+        if (whitelist.includes(origin)) callback(null, true);
+        else callback(null, false)
       }
     }
 
