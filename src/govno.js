@@ -35,18 +35,18 @@ exports.run = async (client) => {
 
     app.post(
         '//api/auth/addrole',
-        EndpointUtils.addRole(this, false, true),
+        EndpointUtils.addRole({ client }, false, true),
         (req, res) => { });
 
     app.post(
         '//api/auth/removerole',
-        EndpointUtils.removeRole(this, false, true),
+        EndpointUtils.removeRole({ client }, false, true),
         (req, res) => { });
-        
+
 
     app.get(
         '//api/user/@me',
-        EndpointUtils.authenticate(this, false, true),
+        EndpointUtils.authenticate({ client }, false, true),
         (req, res) => {
             return res.json({ user: req.user, guilds: req.guilds });
         }
