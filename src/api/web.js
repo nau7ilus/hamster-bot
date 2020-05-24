@@ -89,7 +89,7 @@ module.exports = class WebRoute extends Route {
 
     async _tokenRequest(code) {
         const creds = btoa(`629322882882863104:${process.env.DISCORD_SECRET}`);
-        const req = await fetch(`${API_URL}/oauth2/token?grant_type=authorization_code&code=${code}&redirect_uri=https://test.robo-hamster.ru`, {
+        const req = await fetch(`${API_URL}/oauth2/token?grant_type=authorization_code&code=${code}&redirect_uri=https://robo-hamster.ru`, {
             method: 'POST',
             headers: { Authorization: `Basic ${creds}` }
         })
