@@ -214,6 +214,7 @@ module.exports = class EndpointUtils {
         }
 
         return fetch(`${API_URL}${endpoint}`, {
+            headers: { Authorization: `Bearer ${token}` },
         }).then(res => (res.ok ? res.json() : Promise.reject(res)));
     }
 
