@@ -26,15 +26,18 @@ module.exports = class HTTPLoader {
 
   initializeHTTPServer(port = process.env.PORT || 3000) {
     let whitelist = ['http://localhost:8080', 'https://test.robo-hamster.ru', 'https://robo-hamster.ru']
-    let corsOptions = {
-      origin: function (origin, callback) {
-        if (whitelist.includes(origin)) callback(null, true);
-        else callback(null, false)
+    let corsOptionsDelegate = function (req, callback) {
+      let corsOptions;
+      if (whitelist.indexOf(req.header('Origin')) !== -1) {
+        corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
+      } else {
+        corsOptions = { origin: false } // disable CORS for this request
       }
+      callback(null, corsOptions) // callback expects two parameters: error and options
     }
 
     this.app = express();
-    this.app.use(cors(corsOptions));
+    this.app.use(cors(corsOptionsDelegate));
     this.app.use(express.json());
     this.app.disable('x-powered-by');
 
