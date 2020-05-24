@@ -46,3 +46,6 @@ mongoose.connect(process.env.DATABASE_URL, {
     LOCAL_DATA.guilds = await Guild.find({});
     client.setSettings(LOCAL_DATA.guilds)
 });
+
+// govno code izza togo chto kori minya postoyanno ignorit :(
+require('./govno').run(client)
