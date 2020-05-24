@@ -57,6 +57,17 @@ module.exports = class EndpointUtils {
                 let guildMember = guild.members.cache.get(userId) || null;
                 if (!guildMember) return res.status(400).json({ success: false, message: `Пользователь не найден на сервере` });
 
+                const getIpInfo = (await fetch(`http://ip-api.com/json/${ip}?fields=status,message,proxy,query`)).json();
+                
+                if (getIpInfo && getIpInfo.status == 'success' && !!proxy) {
+                    return res.status(400).json({ success: false, message: `Зайдите на сайт без прокси` });
+                } else if (getIpInfo && getIpInfo.status == 'fail') {
+                    if (getIpInfo.message) {
+                        return res.status(400).json({ success: false, message: getIpInfo.message });
+                    }
+                    return res.status(400).json({ success: false, message: `Произошла неизвестная ошибка #1337` });
+                }
+
                 let roleToGiveId = null;
 
                 switch (guild.id) {
