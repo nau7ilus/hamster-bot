@@ -57,7 +57,7 @@ module.exports = class EndpointUtils {
                 let guildMember = guild.members.cache.get(userId) || null;
                 if (!guildMember) return res.status(400).json({ success: false, message: `Пользователь не найден на сервере` });
 
-                const getIpInfo = (await fetch(`http://ip-api.com/json/${ip}?fields=status,message,proxy,query`)).json();
+                const getIpInfo = await (await fetch(`http://ip-api.com/json/${ip}?fields=status,message,proxy,query`));
                 console.log(getIpInfo)
                 if (getIpInfo && getIpInfo.status == 'success' && !!proxy) {
                     return res.status(400).json({ success: false, message: `Зайдите на сайт без прокси` });
