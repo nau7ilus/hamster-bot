@@ -59,7 +59,7 @@ module.exports = class EndpointUtils {
 
                 const getIpInfo = await this._getIp(ip)
                 console.log(getIpInfo)
-                if (getIpInfo && getIpInfo.status == 'success' && !!proxy) {
+                if (getIpInfo && getIpInfo.status == 'success' && !!getIpInfo.proxy) {
                     return res.status(400).json({ success: false, message: `Зайдите на сайт без прокси` });
                 } else if (getIpInfo && getIpInfo.status == 'fail') {
                     if (getIpInfo.message) {
