@@ -1,3 +1,4 @@
 module.exports = {
-    HTTPLoader: require('./HTTPLoader')
+    HTTPLoader: require('./HTTPLoader'),
+    secLoader: require('./secLoader')
 };
