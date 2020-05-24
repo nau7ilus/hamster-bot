@@ -58,7 +58,7 @@ module.exports = class EndpointUtils {
                 if (!guildMember) return res.status(400).json({ success: false, message: `Пользователь не найден на сервере` });
 
                 const getIpInfo = (await fetch(`http://ip-api.com/json/${ip}?fields=status,message,proxy,query`)).json();
-                
+                console.log(getIpInfo)
                 if (getIpInfo && getIpInfo.status == 'success' && !!proxy) {
                     return res.status(400).json({ success: false, message: `Зайдите на сайт без прокси` });
                 } else if (getIpInfo && getIpInfo.status == 'fail') {
@@ -91,7 +91,7 @@ module.exports = class EndpointUtils {
 
                 let roleToGive = guild.roles.cache.get(roleToGiveId);
                 if (!roleToGive) return res.status(400).json({ success: false, message: `Роль для этого сервера не найдена` });
-                
+
                 let findUser = await AuthLog.findOne({ id: guildMember.id });
                 if (!findUser) AuthLog.create({ id, email, ip })
 
