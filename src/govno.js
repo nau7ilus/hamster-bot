@@ -34,25 +34,25 @@ exports.run = async (client) => {
     );
 
     app.post(
-        '/addrole',
+        '//api/auth/addrole',
         EndpointUtils.addRole(this, false, true),
         (req, res) => { });
 
     app.post(
-        '/removerole',
+        '//api/auth/removerole',
         EndpointUtils.removeRole(this, false, true),
         (req, res) => { });
         
 
     app.get(
-        '/@me',
+        '//api/user/@me',
         EndpointUtils.authenticate(this, false, true),
         (req, res) => {
             return res.json({ user: req.user, guilds: req.guilds });
         }
     );
 
-    app.post('/login', async (req, res) => {
+    app.post('/api/web/login', async (req, res) => {
         const { code } = req.body;
         if (!code) {
             return res
