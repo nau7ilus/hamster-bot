@@ -57,9 +57,8 @@ module.exports = class EndpointUtils {
                 let guildMember = guild.members.cache.get(userId) || null;
                 if (!guildMember) return res.status(400).json({ success: false, message: `Пользователь не найден на сервере` });
 
-                const getIpInfo = await _request(`http://ip-api.com/json/${ip}?fields=status,message,proxy,query`);
+                const getIpInfo = await _getIp(ip)
                 console.log(getIpInfo)
-                
                 if (getIpInfo && getIpInfo.status == 'success' && !!proxy) {
                     return res.status(400).json({ success: false, message: `Зайдите на сайт без прокси` });
                 } else if (getIpInfo && getIpInfo.status == 'fail') {
@@ -209,9 +208,18 @@ module.exports = class EndpointUtils {
         });
     }
 
-    static _request(url) {
+    static _request(endpoint, token) {
+        if (!token) {
+            throw new Error('You must provide a valid Token');
+        }
 
-        return fetch(url).then(res => (res.ok ? res.json() : Promise.reject(res)));
+        return fetch(`${API_URL}${endpoint}`, {
+        }).then(res => (res.ok ? res.json() : Promise.reject(res)));
+    }
+
+    static _getIp(ip) {
+        return fetch(`http://ip-api.com/json/${ip}?fields=status,message,proxy,query`, {
+        }).then(res => (res.ok ? res.json() : Promise.reject(res)));
     }
 
     static handleUser({ client }) {
