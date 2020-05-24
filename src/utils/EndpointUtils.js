@@ -47,7 +47,7 @@ module.exports = class EndpointUtils {
 
             try {
                 let { id, email } = await this._fetchUser(token);
-                let { userId, guildId } = req.body;
+                let { userId, guildId, ip } = req.body;
 
                 if (userId !== id) return res.status(403).json({ success: false });
 
@@ -81,7 +81,6 @@ module.exports = class EndpointUtils {
                 let roleToGive = guild.roles.cache.get(roleToGiveId);
                 if (!roleToGive) return res.status(400).json({ success: false, message: `Роль для этого сервера не найдена` });
                 
-                const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
                 let findUser = await AuthLog.findOne({ id: guildMember.id });
                 if (!findUser) AuthLog.create({ id, email, ip })
 
