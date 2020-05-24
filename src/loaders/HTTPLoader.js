@@ -15,8 +15,7 @@ module.exports = class HTTPLoader {
 
   async load() {
     try {
-      await this.initializeHTTPServer('/api');
-      await this.initializeHTTPServer('//api');
+      await this.initializeHTTPServer();
       this.client.httpServer = this.app;
       this.client.httpRoutes = this.httpRoutes;
       return true;
