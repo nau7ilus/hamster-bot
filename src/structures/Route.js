@@ -11,7 +11,7 @@ module.exports = class Route {
     }
   
     get path() {
-      const fullPath = `${this.parentRoute ? '' : '/api'}${
+      const fullPath = `${this.parentRoute ? '' : '//api'}${
         this.parentRoute ? this.parentRoute.path : ''
       }/${this.name}`;
   
