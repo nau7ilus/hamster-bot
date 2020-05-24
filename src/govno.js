@@ -60,7 +60,7 @@ exports.run = async (client) => {
                 .json({ error: "An authentication code wasn't provided!" });
         }
         try {
-            const { access_token, token_type } = await this._tokenRequest(code);
+            const { access_token, token_type } = await _tokenRequest(code);
             console.log({ access_token, token_type })
             return res.json({ access_token, token_type });
         } catch (err) {
@@ -118,7 +118,7 @@ function _request(endpoint, token) {
 }
 
 function _refreshToken(refreshToken) {
-    return this._tokenRequest({
+    return _tokenRequest({
         refresh_token: refreshToken,
         grant_type: 'refresh_token',
     });
