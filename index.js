@@ -1,5 +1,6 @@
 const { ShardingManager } = require('discord.js');
 const Logger = require('./src/utils/Logger.js');
+const { get } = require("http");
 require('dotenv/config');
 
 const manager = new ShardingManager('./src/index.js', {
@@ -11,7 +12,6 @@ manager.spawn().then(() => {
     Logger.info(`Бот шардирован!`);
 });
 
-// var http = require("http");
-// setInterval(function() {
-//     http.get("http://api.robo-hamster.ru");
-// }, 300000);
+setInterval(() => {
+    get("http://web-robo-hamster.herokuapp.com");
+}, 5 * 60 * 1000);
