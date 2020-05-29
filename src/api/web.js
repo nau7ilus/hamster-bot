@@ -97,8 +97,8 @@ module.exports = class WebRoute extends Route {
         body.append('client_id', '629322882882863104')
         body.append('client_secret', process.env.DISCORD_SECRET)
         body.append('grant_type', 'authorization_code')
-        body.append('redirect_uri', 'http://localhost:8080')
-        body.append('scope', 'guilds identify')
+        body.append('redirect_uri', 'https://robo-hamster.ru')
+        body.append('scope', 'guilds identify connections')
         body.append('code', code);
 
         const req = await fetch(`${API_URL}/oauth2/token?grant_type=authorization_code`, {
