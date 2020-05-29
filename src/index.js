@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { readFileSync } = require('fs');
 require('dotenv/config');
+// const { createConnection } = require('mysql');
 
 const Logger = require('./utils/Logger.js');
 const Client = require('./structures/Client.js');
@@ -42,10 +43,24 @@ mongoose.connect(process.env.DATABASE_URL, {
     useUnifiedTopology: true
 }, async (err) => {
     if (err) throw err;
-    Logger.info('База данных подключена');
+    Logger.info('База данных MONGO подключена');
     LOCAL_DATA.guilds = await Guild.find({});
     client.setSettings(LOCAL_DATA.guilds)
 });
 
-// govno code izza togo chto kori minya postoyanno ignorit :(
-require('./govno').run(client)
+// const database = createConnection({
+//     host: process.env.MYSQL_HOST,
+//     user: process.env.MYSQL_USER,
+//     password: process.env.MYSQL_PASSWORD,
+//     database: process.env.MYSQL_DATABASE,
+//     charset: 'utf8mb4'
+// });
+
+// database.connect(function(err) {
+//     if (err) return process.exit(626);
+//     Logger.info('База данных MYSQL подключена');
+//     connection.query("SET SESSION wait_timeout = 604800"); // 3 дня
+//     connection.query('SET NAMES utf8mb4')
+// });
+
+// module.exports = { };
