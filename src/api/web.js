@@ -1,7 +1,6 @@
 const { Router } = require('express');
-
 const fetch = require('node-fetch');
-const btoa = require('btoa');
+const FormData = require('form-data');
 
 const Route = require('../structures/Route');
 
@@ -29,8 +28,13 @@ module.exports = class WebRoute extends Route {
                     .json({ error: "An authentication code wasn't provided!" });
             }
             try {
-                const { access_token, token_type } = await this._tokenRequest(code);
-                console.log({ access_token, token_type })
+                const { access_token, token_type, scope } = await this._tokenRequest(code);
+
+                // Проверим наличие необходимых данных
+                if (scope !== 'identify guilds connections') {
+                    return res.json({ success: false, message: "Изменена исходная ссылка авторизации"})
+                }
+
                 return res.json({ access_token, token_type });
             } catch (err) {
                 console.error(err);
@@ -88,10 +92,17 @@ module.exports = class WebRoute extends Route {
     }
 
     async _tokenRequest(code) {
-        const creds = btoa(`629322882882863104:${process.env.DISCORD_SECRET}`);
-        const req = await fetch(`${API_URL}/oauth2/token?grant_type=authorization_code&code=${code}&redirect_uri=https://robo-hamster.ru`, {
-            method: 'POST',
-            headers: { Authorization: `Basic ${creds}` }
+
+        const body = new FormData();
+        body.append('client_id', '629322882882863104')
+        body.append('client_secret', process.env.DISCORD_SECRET)
+        body.append('grant_type', 'authorization_code')
+        body.append('redirect_uri', 'https://robo-hamster.ru')
+        body.append('scope', 'guilds identify connections')
+        body.append('code', code);
+
+        const req = await fetch(`${API_URL}/oauth2/token?grant_type=authorization_code`, {
+            method: 'POST', body
         })
         return await req.json();
     }

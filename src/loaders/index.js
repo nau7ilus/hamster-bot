@@ -1,3 +1,3 @@
 module.exports = {
-    // HTTPLoader: require('./HTTPLoader')
+    HTTPLoader: require('./HTTPLoader')
 };
