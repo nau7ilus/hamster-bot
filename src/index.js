@@ -44,8 +44,7 @@ mongoose.connect(process.env.DATABASE_URL, {
 }, async (err) => {
     if (err) throw err;
     Logger.info('База данных MONGO подключена');
-    LOCAL_DATA.guilds = await Guild.find({});
-    client.setSettings(LOCAL_DATA.guilds)
+    client.setSettings(await Guild.find({}))
 });
 
 // const database = createConnection({

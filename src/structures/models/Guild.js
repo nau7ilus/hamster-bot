@@ -1,64 +1,90 @@
-// Еще не готово
-const { Schema, model } = require('mongoose');
+// Файл для создания модели гильдии. Используется в базе данных.
+// Настройки бота для определенного Discord-сервера 
 
+// Импортируем класс Sсhema и функцию model из модуля mongoose
+// для создания модели гильдии
+const { Schema, model } = require('mongoose');
+const client = require('../../index');
+
+// Оглашаем новую шему с информацией о гильдии
 const GuildSchema = new Schema({
+
+    // ID гильдии
     id: {
         type: String,
-        unique: true
+        unique: true // Должно быть уникально
     },
+
+    // Является ли гильдия премиум-сервером?
+    // На время тестирования используется только на серверах Arizona Games
+    // Планируется подключить Patreon для пожертвований
     isPremium: {
-        type: Boolean,
-        default: false
+        type: Boolean, // Хранит только ДА/НЕТ
+        default: false // По умолчанию НЕТ
     },
+
+    // Общие настройки бота
     common: {
+
+        // Префикс используется в начале сообщений для обозначения команд бота
         prefix: {
             type: String,
-            maxlength: 20,
-            default: '/'
+            maxlength: 20, // Максимальное количество 
+            default: '/' // По умолчанию
         },
-        locale: String,
+
+        // Цвет системных сообщений
         color: {
             type: String,
             default: '#b5ff33'
         }
     },
-    // Добавить audit, leaders, welcome, commands
-    custom: [
-        {
-            enabled: {
-                type: Boolean,
-                default: true
-            },
-            ignoredChannels: [],
-            ignoredRoles: [],
-            requiredChannels: [],
-            requiredRoles: [],
-            deleteSrc: 0,
-            description: String,
-            name: String,
-            nsfw: Boolean,
-            cooldown: {
-                type: String, // user, guild, channel
-                time: Number
-            },
-            actions: [
-                {
-                    type: String, // [message, addRole, removeRole, if, else, endif, var]
-                    roles: [],
-                    message: {
-                        deleteAfter: 0,
-                        content: String,
-                        tts: Boolean,
-                        embed: {
-                            color: String
-                        }
-                    }
-                }
-            ]
-        }
-    ]
+
+    // Система выдачи ролей
+    giveRole: {
+
+        // Включена ли функция?
+        isEnabled: {
+            type: Boolean,
+            default: false
+        },
+
+        // Необходимо для использования системы
+        require: {
+            channels: Array, // Список каналов, в которых можно управлять ролями
+            roles: Array // Список ролей, необходимые для использования системы
+        },
+
+        // Игнорируемые каналы/роли
+        banned: {
+            channels: Array, // Список каналов, которые бот будет игнорировать
+            roles: Array // Список ролей, при наличии которой бот будет игнорировать человека
+        },
+
+        // Какой из алгоритмов валидации ника использовать?
+        // Планируется сделать настройку на сайте в виде изменения позиций, создания своих тэгов
+        // Временно используются установленные регулярные выражения, устанавливаются через сайт
+        nameRegex: {
+            type: String
+        },
+
+        // Список слов, на которые бот будет реагировать в указанном канале
+        triggerWords: Array,
+
+        // Список тэгов и необходимых ролей для управления данной ролью
+        tags: [
+            {
+                names: Array, // Список названий тэга и его аналогов ["LSPD", "ЛСПД"]
+                giveRoles: Array, // Список ролей, которые необходимо выдать
+                manageRoles: Array // Список ролей, которые могут ей управлять
+            }
+        ]
+    }
 }, {
+    // Отключаем использования строки версии в объектах 
     versionKey: false
 });
 
-module.exports = model('guilds', GuildSchema);;
+
+// Эксопортируем модель гильдии
+module.exports = model('guilds', GuildSchema);
