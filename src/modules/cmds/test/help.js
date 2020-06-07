@@ -1,5 +1,5 @@
-const Command = require('../../structures/Command');
-const getThing = require('../../utils/getThing');
+const Command = require('../../../structures/Command');
+const getThing = require('../../../utils/getThing');
 const { MessageEmbed } = require('discord.js');
 
 module.exports = new Command({
@@ -7,14 +7,17 @@ module.exports = new Command({
     description: 'Помощь по командам',
     usage: 'help <команда>',
     aliases: ['h'],
-    devOnly: true
+    devOnly: true,
+    guildOnly: true
 }, async (client, message, args) => {
+    if (!['625036675059548220', '717206305374470155'].includes(message.guild.id)) return;
+
     console.log(client.commands)
     const embed = new MessageEmbed()
         .setColor('#beff33')
     let command;
     if (args[0]) {
-        if (command = await getThing('command', args[0])) {
+        if (command = await getThing(client, 'command', args[0])) {
 
             embed
                 .setTitle(`**📚 Информация по команде ${command.name}`)

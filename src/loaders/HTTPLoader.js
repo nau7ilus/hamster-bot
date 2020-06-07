@@ -1,11 +1,16 @@
+// Экспортируем модули сторонних разработчиков
+const express = require('express'); // Веб-фреймворк
+const morgan = require('morgan'); // Middleware HTTP запросов
+const cors = require('cors');
+
+// Импортируем собственные модули
 const Route = require('../structures/Route');
 const FileUtils = require('../utils/FileUtils');
-const chalk = require('chalk');
-const express = require('express');
-const cors = require('cors');
-const morgan = require('morgan');
 
+// Экспортируем класс HTTP загрузчика
 module.exports = class HTTPLoader {
+
+  // В конструкторе получаем объект клиента
   constructor(client) {
     this.client = client;
 
@@ -24,43 +29,41 @@ module.exports = class HTTPLoader {
     }
   }
 
-  initializeHTTPServer(port = process.env.PORT || 3000) {
-    let whitelist = ['http://localhost:8080', 'https://test.robo-hamster.ru', 'https://robo-hamster.ru']
+  // Инициализация веб-сервера
+  initializeHTTPServer(port = process.env.PORT || 3000) { // Используем порт, предоставленный Heroku или 3000
+
+    // Подключаем CORS
+    let whitelist = ['http://localhost:8080', 'https://test.robo-hamster.ru', 'https://robo-hamster.ru'];
     let corsOptionsDelegate = function (req, callback) {
       let corsOptions;
       if (whitelist.indexOf(req.header('Origin')) !== -1) {
-        corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
+        corsOptions = { origin: true }
       } else {
-        corsOptions = { origin: false } // disable CORS for this request
+        corsOptions = { origin: false }
       }
-      callback(null, corsOptions) // callback expects two parameters: error and options
+      callback(null, corsOptions)
     }
 
-    this.app = express();
-    this.app.use(cors(corsOptionsDelegate));
-    this.app.use(express.json());
-    this.app.disable('x-powered-by');
+    this.app = express(); // Инициализируем веб-сервер
+    this.app.use(cors(corsOptionsDelegate)); // Используем CORS
+    this.app.use(express.json()); // Ожидается получение JSON
+    this.app.disable('x-powered-by'); // Отключаем в заголовках ответа копирайт фреймворка
 
     this.app.use(
       morgan(
-        `${chalk.cyan('[HTTP]')} ${chalk.green(
-          ':method :url - IP :remote-addr - Код :status - Размер :res[content-length] B - Время обработки :response-time ms'
-        )}`
+        `\n[HTTP]
+          ':method :url - IP :remote-addr - Код :status - Размер :res[content-length] B - Время обработки :response-time ms'`
       )
     );
 
     this.app.listen(port, () => {
-      this.client.log(`Сервер работает на порту ${port}`, {
-        tags: ['HTTP'],
-        color: 'green',
-      });
+      console.log(`\n[HTTP] Сервер запущен на порту ${port}`);
     });
 
     return this.initializeRoutes();
   }
 
-  // Routes
-
+  // Инициализация маршрутов
   initializeRoutes(dirPath = 'src/api') {
     let success = 0;
     let failed = 0;
@@ -70,22 +73,16 @@ module.exports = class HTTPLoader {
       this.addRoute(new NewRoute(this.client)) ? success++ : failed++;
     }).then(() => {
       if (failed)
-        this.client.error(`${success} HTTP роуты загружены, ${failed} ошибка.`);
+        console.warn(`[HTTP] Успешно загружено маршрутов: ${success}, в ${failed} ошибка.`);
       else
-        this.client.log(`Все ${success} HTTP роуты загружены без ошибок.`, {
-          tags: ['HTTP'],
-          color: 'green',
-        });
+        console.log(`[HTTP] Успешно загружено маршрутов: ${success}`);
     });
   }
 
-  /**
-   * Add a new Route
-   * @param {Route} route - Route to be added
-   */
+  // Добавляем новый маршрут
   addRoute(route) {
     if (!(route instanceof Route)) {
-      console.log(`${route} ошибка загрузки, не является роутом`);
+      console.log(`[HTTP] ${route} ошибка загрузки, не является роутом`);
       return false;
     }
 

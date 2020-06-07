@@ -1,4 +1,5 @@
-const Command = require('../../structures/Command');
+const Command = require('../../../structures/Command');
+const Guild = require('../../../structures/models/Guild')
 
 module.exports = new Command({
     name: 'eval',

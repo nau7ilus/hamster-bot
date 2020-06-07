@@ -1,8 +1,5 @@
-
-const client = require('../index.js');
-
 // Переделать под класс
-module.exports = async (dataType, text) => {
+module.exports = async (client, dataType, text) => {
     const message = text.hasOwnProperty('content') && text.content instanceof String ? text : null;
 
     switch (dataType) {

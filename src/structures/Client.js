@@ -1,40 +1,47 @@
+// Импортируем модули сторонних разработчиков
 const { Client, Collection } = require('discord.js');
 const { readdirSync } = require('fs');
-const Logger = require('../utils/Logger.js');
-const Loaders = require('../loaders/index')
-const chalk = require('chalk');
 
+// Импортируем загрузчики
+const Loaders = require('../loaders/index')
+
+// Экспортируем только созданный класс из обычного Client
 module.exports = class AdvancedClient extends Client {
-    constructor(token, guilds, devs, props) {
-        super(props);
-        super.login(token)//.then(() => this.prefixes.push(`<@${this.user.id}>`));
-        this.settings = null;
-        this.commands = new Collection();
-        this.developers = devs;
-        Logger.comment('Авторизация клиента', 'loading');
+    constructor(token, devs = [], props) {
+        super(props); // Если укажут дополнительные значения, используем их
+        super.login(token); // Авторизовуемся, используя токен
+
+        this.commands = new Collection(); // Список команд бота
+        this.developers = devs; // ID разработчиков бота. Используется в командах с ограниченным доступом
+        this.settings = null; // Настройки серверов (префиксы, системы). Устанавливается при подключение к БД
+
+        console.log(`[Client] Начинается авторизация клиента`);
     };
 
     loadCommands(path) {
+        console.log(`\n[Commands] Начинается загрузка команд`);
+
         const dirs = readdirSync(path);
         let total = 0;
-        Logger.info('Загрузка команд', 'loading');
-        Logger.comment(`Категорий : (${dirs.length})`, 'loading');
+        console.log(`[Commands] Категорий: ${dirs.length}`);
 
         for (let i in dirs) {
             const dir = dirs[i];
             const files = readdirSync(`${path}/${dir}`);
+
             if (dirs.length === 0) continue;
-            Logger.comment(`Команды в папке '${dir}' : (${files.length})`, 'loading');
+            console.log(`[Commands] Кол-во команд в папке ${dir}: ${files.length}`);
 
             for (let j in files) {
                 const c = files[j];
                 if (!c.endsWith('.js')) continue;
 
-                this.loadCommand(`../cmds/${dir}`, c);
+                this.loadCommand(`../modules/cmds/${dir}`, c);
                 total++;
             }
         }
-        Logger.info(`Загружено команд: ${total}`, 'loading');
+        console.log(`[Commands] Загружено команд: ${total}`);
+        console.log(this.commands)
         return this;
     }
 
@@ -42,42 +49,33 @@ module.exports = class AdvancedClient extends Client {
         const command = require(`${path}/${name}`);
         if (command === undefined) throw new Error(`Название команды или ее путь указаны неверно\nПуть : ${path}\nНазвание:${name}`);
         this.commands.set(name, command);
-        Logger.comment(`Загружается команда : ${Logger.setColor('gold', name)}`, 'loading');
+        console.log(`[Commands] Загружается команда: ${name}`);
     }
 
     loadEvents(path) {
+        console.log(`\n[Events] Начинается загрузка событий`);
+
         const files = readdirSync(path);
         let total = 0;
-        Logger.info('Загружаются события', 'loading');
-        Logger.comment(`Событий : (${files.length})`, 'loading');
+        console.log(`[Events] Событий: ${files.length}`);
 
         for (let file in files) {
             const eventFile = files[file];
             if (!eventFile.endsWith('.js')) continue;
             if (!eventFile) throw new Error(`Название события или его путь указаны неверно\nПуть : ${path}\nНазвание:${name}`);
-            const event = require(`../events/${eventFile}`);
+
+            const event = require(`../modules/events/${eventFile}`);
             const eventName = eventFile.split('.')[0];
             this.on(eventName, event.bind(null, this));
             total++;
-            Logger.comment(`Загружается событие : ${Logger.setColor('gold', `${eventName}.js`)}`, 'loading');
+
+            console.log(`[Events] Загружается событие: ${eventName}`)
         }
-        Logger.info(`Загружено событий: ${total}`, 'loading');
+        console.log(`[Events] Загружено событий: ${total}`)
         return this;
     }
 
-    isDev(id) {
-        return this.developers.includes(id);
-    }
-
-    hasPermission(message, permission) {
-        return message.guild ? message.guild.me.hasPermission(permission, true, false, false) : false;
-    }
-
-    setSettings(settings) {
-        this.settings = settings;
-        return this;
-    }
-    
+    // Инициализация настроек
     async initializeLoaders() {
         for (let Loader in Loaders) {
             let loader = new Loaders[Loader](this);
@@ -91,12 +89,20 @@ module.exports = class AdvancedClient extends Client {
         return this;
     }
 
-    log(message, { tags, color = 'white' }) {
-        console.log(...tags.map(t => chalk.cyan(`[${t}]`)), chalk[color](message));
+    // Является ли пользователь разработчиком
+    isDev(id) {
+        return this.developers.includes(id);
     }
 
-    logError(...args) {
-        const tags = args.length > 1 ? args.slice(0, -1).map(t => `[${t}]`) : [];
-        console.error('[Error]', ...tags, args[args.length - 1]);
+    // Имеет ли бот определенное право на сервере
+    hasPermission(message, permission) {
+        return message.guild ? message.guild.me.hasPermission(permission, true, false, false) : false;
     }
+
+    // Установка настроек бота
+    setSettings(settings) {
+        this.settings = settings;
+        return this;
+    }
+
 };

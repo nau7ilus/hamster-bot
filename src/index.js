@@ -1,65 +1,36 @@
-const mongoose = require('mongoose');
-const { readFileSync } = require('fs');
+// Импортируем модули сторонних разработчиков
+const { connect } = require('mongoose'); // База данных
 require('dotenv/config');
-// const { createConnection } = require('mysql');
 
-const Logger = require('./utils/Logger.js');
+// Импортируем модули отечественной разработки
 const Client = require('./structures/Client.js');
 const Guild = require('./structures/models/Guild');
 
-const LOCAL_DATA = {
-    guilds: null,
-    developers: [
-        '422109629112254464', // Филипп (Nowman)
-        '408740341135704065', // Андрей (Maikl Zhosan)
-        '336207279412215809' // Артём (Kory)
-    ]
-}
-
-Logger.logComments = true;
-try {
-    console.log(Logger.setColor('orange', readFileSync('./HamsterBot.txt').toString()));
-} catch (e) {
-    console.log(Logger.setColor('blue', 'Робохомячок'));
-}
-
-Logger.info(`Начало загрузки бота.`, 'loading');
-
+// Оглашаем клиента
 const client = new Client(
     process.env.DISCORD_TOKEN, // Токен
-    LOCAL_DATA.guilds, // Настройки для серверов
-    LOCAL_DATA.developers); // Разработчики
-module.exports = client;
+    // Разработчики
+    [
+        "422109629112254464", // Филипп
+        "336207279412215809", // Артем
+        "408740341135704065" // Андрей
+    ]);
 
 client
-    .loadCommands('./src/cmds/')
-    .loadEvents('./src/events/')
-    .initializeLoaders();
+    .loadCommands('./src/modules/cmds/') // Загружаем команды
+    .loadEvents('./src/modules/events/') // Загружаем события
+    .initializeLoaders(); // Запускаем HTTP загрузчик
 
-Logger.log('Конец загрузки бота.', 'loading');
-
-mongoose.connect(process.env.DATABASE_URL, {
+// Подключаемся к базе данных
+connect(process.env.DATABASE_URL, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useCreateIndex: true
 }, async (err) => {
     if (err) throw err;
-    Logger.info('База данных MONGO подключена');
-    client.setSettings(await Guild.find({}))
+    console.log('[Database] База данных Mongo успешно подключена.');
+    client.setSettings(await Guild.find({})); // Устанавливаем настройки серверов для клиента
 });
 
-// const database = createConnection({
-//     host: process.env.MYSQL_HOST,
-//     user: process.env.MYSQL_USER,
-//     password: process.env.MYSQL_PASSWORD,
-//     database: process.env.MYSQL_DATABASE,
-//     charset: 'utf8mb4'
-// });
-
-// database.connect(function(err) {
-//     if (err) return process.exit(626);
-//     Logger.info('База данных MYSQL подключена');
-//     connection.query("SET SESSION wait_timeout = 604800"); // 3 дня
-//     connection.query('SET NAMES utf8mb4')
-// });
-
-// module.exports = { };
+// Экспортируем клиента
+module.exports = client;

@@ -1,0 +1,17 @@
+// Импортируем модули сторонних разработчиков
+const { DateTime } = require('luxon'); // Форматирование времени
+
+module.exports = async (client) => {
+	console.log(`\n[Ready] Бот запущен. Авторизован как ${client.user.tag
+		} | Серверов: ${client.guilds.cache.size} | Пользователей: ${
+		client.users.cache.size}`)
+
+	console.log(`[Ready] Время: ${DateTime.local().toFormat('TT')}`)
+	console.log(`[Ready] RAM: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`)
+
+	// Отправлять каждые 20 минут информацию об использованной памяти
+	setInterval(() => {
+		console.log(`\n[Ready] Время: ${DateTime.local().toFormat('TT')}`)
+		console.log(`[Ready] RAM: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`)
+	}, 20 * 60 * 1000);
+}
