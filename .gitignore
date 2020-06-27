@@ -4,3 +4,4 @@ start.cmd
 .github
 .DS_Store
 .env
+nodemon.json

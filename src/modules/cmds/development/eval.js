@@ -1,6 +1,7 @@
 const Command = require('../../../structures/Command');
 const Guild = require('../../../structures/models/Guild')
-
+const RoleRequests = require('../../../structures/models/RoleRequests'); 
+RoleRequests.find
 module.exports = new Command({
     name: 'eval',
     description: 'Выполнить команду',

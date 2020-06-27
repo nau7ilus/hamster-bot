@@ -22,16 +22,35 @@ module.exports = async (client, message) => {
     }
 
     // Получаем настройки сервера, иначе null
-    const guildSettings = client.settings ? client.settings.find(g => g.id == message.guild.id) : null;
+    const guildSettings = message.guild && client.settings ? client.settings.find(g => g.id == message.guild.id) : null;
 
     // Проверяем, включена ли система выдачи ролей
-    if (guildSettings && guildSettings.giveRole.isEnabled &&
-        guildSettings.giveRole.triggerWords.length !== 0) {
+    if (guildSettings && guildSettings.give_role.is_enabled &&
+        guildSettings.give_role.trigger_words.length !== 0) {
 
         // Создаем регулярное выражение, включая слова-триггеры для системы
-        let systemTrigger = new RegExp(`^(?:${guildSettings.giveRole.triggerWords.join('|')})$`, "gi")
+        let systemTrigger = new RegExp(`^(?:${guildSettings.give_role.trigger_words.join('|')})$`, "gi")
         if (systemTrigger.test(message.content)) {
-            return require('../giveRoles/createRequest').run(client, message, guildSettings);
+            return require('../giveRoles/createRequest').run(message, guildSettings)
+                .catch((warning) => {
+                    console.warn(`[GiveRole] [Warn] Произошла ошибка в коде создания запроса Время: ${
+                        DateTime.local().toFormat('TT')}\nОшибка: ${warning.stack}`)
+
+                    // Если автор команды - разработчик, отправить информацию об ошибке, иначе просто факт
+                    if (client.isDev(message.author.id)) {
+                        return message.channel.send(new MessageEmbed()
+                            .setColor('#ff3333')
+                            .setDescription(`**Произошла ошибка в коде системы**`)
+                            .addField('**Отладка**', `**Автор: ${message.author} (\`${message.author.id}\`)\nСервер: **${message.guild.name}** (\`${message.guild.id}\`)\nВ канале: ${message.channel} (\`${message.channel.id})\`**`)
+                            .addField('**Сообщение:**', messageToString)
+                            .addField('**Ошибка**', warning.stack.length > 1024 ? warning.stack.substring(0, 1021) + '...' : warning.stack));
+                    } else {
+                        return message.channel.send(new MessageEmbed()
+                            .setColor('#ff3333')
+                            .setTitle('**🚫 | Ошибка**')
+                            .setDescription('**Произошла ошибка в коде команды. Сообщите разработчикам об этом**'));
+                    }
+                });
         }
     }
 
@@ -129,7 +148,7 @@ module.exports = async (client, message) => {
 
     // Функция для проверки прав у пользователя/бота
     function verifyPerms(command) {
-        
+
         // Создаем два массива, куда будем вставлять необходимые права
         const clientMissingPermissions = [];
         const userMissingPermissions = [];

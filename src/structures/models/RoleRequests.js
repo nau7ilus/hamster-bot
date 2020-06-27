@@ -5,17 +5,17 @@ const RequestSchema = new Schema({
         id: {
             type: String
         },
-        nickInfo: {
+        nick_info: {
             type: Array
         }
     },
-    guildId: {
+    guild_id: {
         type: String
     },
-    requestedChannel: {
+    requested_channel: {
         type: String
     },
-    roleToGive: {
+    role_to_give: {
         type: Array
     },
     date: {

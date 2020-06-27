@@ -18,11 +18,10 @@ const GuildSchema = new Schema({
     // Является ли гильдия премиум-сервером?
     // На время тестирования используется только на серверах Arizona Games
     // Планируется подключить Patreon для пожертвований
-    isPremium: {
+    is_premium: {
         type: Boolean, // Хранит только ДА/НЕТ
         default: false // По умолчанию НЕТ
     },
-
     // Общие настройки бота
     common: {
 
@@ -39,15 +38,31 @@ const GuildSchema = new Schema({
             default: '#ecc333'
         }
     },
+    
+    // Система каптов:
+    illegals: {
+
+        is_enabled: { type: Boolean, default: false }, // Включено ли?
+
+        // Тип сообщений бота
+        message_type: { type: String, default: "embed" },
+
+        // Список тригеров
+        triggers: [{
+            words: Array,
+            require_channel: String, 
+            log_channel: String
+        }]
+    },
 
     // Система выдачи ролей
-    giveRole: {
+    give_role: {
 
         // Включена ли функция?
-        isEnabled: {
-            type: Boolean,
-            default: false
-        },
+        is_enabled: { type: Boolean, default: false },
+
+        // Тип сообщений
+        message_type: { type: String, default: "embed" },
 
         // Необходимо для использования системы
         require: {
@@ -64,20 +79,20 @@ const GuildSchema = new Schema({
         // Какой из алгоритмов валидации ника использовать?
         // Планируется сделать настройку на сайте в виде изменения позиций, создания своих тэгов
         // Временно используются установленные регулярные выражения, устанавливаются через сайт
-        nameRegex: String,
+        name_regexp: String,
 
         // Список слов, на которые бот будет реагировать в указанном канале
-        triggerWords: Array,
+        trigger_words: Array,
 
         // Канал для отправки запросов
-        requestsChannel: String,
+        requests_channel: String,
 
         // Список тэгов и необходимых ролей для управления данной ролью
         tags: [
             {
                 names: Array, // Список названий тэга и его аналогов ["LSPD", "ЛСПД"]
-                giveRoles: Array, // Список ролей, которые необходимо выдать
-                manageRoles: Array // Список ролей, которые могут ей управлять
+                give_roles: Array, // Список ролей, которые необходимо выдать
+                manage_roles: Array // Список ролей, которые могут ей управлять
             }
         ]
     }

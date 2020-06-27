@@ -296,7 +296,7 @@ module.exports = class EndpointUtils {
                 let guildInDB = client.settings.find(find => guild.id === find.id) || null;
                 console.log(guildInDB);
 
-                if (guildInDB && guildInDB.isPremium) return guild;
+                if (guildInDB && guildInDB.is_premium) return guild;
             })
     }
 
@@ -331,7 +331,7 @@ module.exports = class EndpointUtils {
             }
             // guild.isBotOnGuild = client.guilds.cache.has(guild.id);
             // let guildInDB = client.settings.find(find => guild.id === find.id) || null;
-            // guild.isPremium = guildInDB ? guildInDB.isPremium : null;
+            // guild.is_premium = guildInDB ? guildInDB.is_premium : null;
             return guild;
         });
     }
