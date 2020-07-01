@@ -1,49 +1,52 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose");
 
-const AuthSchema = new Schema({
+const AuthSchema = new Schema(
+  {
     id: {
-        type: String,
-        unique: true
+      type: String,
+      unique: true,
     },
     guild: {
-        type: String
+      type: String,
     },
     username: {
-        type: String
+      type: String,
     },
     avatar: {
-        type: String
+      type: String,
     },
     discriminator: {
-        type: String
+      type: String,
     },
     giveType: {
-        type: String
+      type: String,
     },
     roles: {
-        type: Array
+      type: Array,
     },
     gaveRole: {
-        type: String
+      type: String,
     },
     nickname: {
-        type: String
+      type: String,
     },
     isMuted: {
-        type: Boolean
+      type: Boolean,
     },
     isDeafen: {
-        type: Boolean
+      type: Boolean,
     },
     ip: {
-        type: String
+      type: String,
     },
     date: {
-        type: Date,
-        default: Date.now
+      type: Date,
+      default: Date.now,
     },
-}, {
-    versionKey: false
-});
+  },
+  {
+    versionKey: false,
+  }
+);
 
-module.exports = model('authLog', AuthSchema);;
+module.exports = model("authLog", AuthSchema);

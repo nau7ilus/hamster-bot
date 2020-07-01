@@ -1,6 +1,6 @@
-const fs = require('fs');
-const path = require('path');
-const { promisify } = require('util');
+const fs = require("fs");
+const path = require("path");
+const { promisify } = require("util");
 
 module.exports = class FileUtils {
   static async requireDirectory(dirPath, success, recursive = true) {
@@ -8,7 +8,7 @@ module.exports = class FileUtils {
     const filesObject = {};
 
     return Promise.all(
-      files.map(async file => {
+      files.map(async (file) => {
         const fullPath = path.resolve(dirPath, file);
         if (file.match(/\.(js|json)$/)) {
           try {
@@ -20,9 +20,7 @@ module.exports = class FileUtils {
             console.error(err);
           }
         } else if (recursive) {
-          const isDirectory = await FileUtils.stat(fullPath).then(f =>
-            f.isDirectory()
-          );
+          const isDirectory = await FileUtils.stat(fullPath).then((f) => f.isDirectory());
           if (isDirectory) {
             return FileUtils.requireDirectory(fullPath, success);
           }

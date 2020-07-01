@@ -1,33 +1,36 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose");
 
-const RequestSchema = new Schema({
+const RequestSchema = new Schema(
+  {
     user: {
-        id: {
-            type: String
-        },
-        nick_info: {
-            type: Array
-        }
+      id: {
+        type: String,
+      },
+      nick_info: {
+        type: Array,
+      },
     },
     guild_id: {
-        type: String
+      type: String,
     },
     requested_channel: {
-        type: String
+      type: String,
     },
     role_to_give: {
-        type: Array
+      type: Array,
     },
     date: {
-        type: Date,
-        default: Date.now
+      type: Date,
+      default: Date.now,
     },
     status: {
-        type: String,
-        default: `poll`
-    }
-}, {
-    versionKey: false
-});
+      type: String,
+      default: `poll`,
+    },
+  },
+  {
+    versionKey: false,
+  }
+);
 
-module.exports = model('roleRequest', RequestSchema);
+module.exports = model("roleRequest", RequestSchema);

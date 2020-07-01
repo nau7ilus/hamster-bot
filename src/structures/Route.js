@@ -1,8 +1,7 @@
 module.exports = class Route {
-
   constructor(options, client) {
     this.name = options.name;
-    this.parentRoute = options.parent || '';
+    this.parentRoute = options.parent || "";
 
     this.client = client;
 
@@ -11,16 +10,16 @@ module.exports = class Route {
   }
 
   get path() {
-    const fullPath = `${this.parentRoute ? '' : '/api'}${
-      this.parentRoute ? this.parentRoute.path : ''
-      }/${this.name}`;
+    const fullPath = `${this.parentRoute ? "" : "/api"}${
+      this.parentRoute ? this.parentRoute.path : ""
+    }/${this.name}`;
 
     return fullPath;
   }
 
   _register(app) {
     if (this.subRoutes) {
-      this.subRoutes.forEach(route => {
+      this.subRoutes.forEach((route) => {
         route._register(app);
       });
     }
@@ -28,5 +27,5 @@ module.exports = class Route {
     this.register(app);
   }
 
-  register(app) { }
+  register(app) {}
 };
