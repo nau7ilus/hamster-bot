@@ -4,7 +4,6 @@
 // Импортируем класс Sсhema и функцию model из модуля mongoose
 // для создания модели гильдии
 const { Schema, model } = require('mongoose');
-const client = require('../../index');
 
 // Оглашаем новую шему с информацией о гильдии
 const GuildSchema = new Schema({
@@ -37,22 +36,6 @@ const GuildSchema = new Schema({
             type: String,
             default: '#ecc333'
         }
-    },
-    
-    // Система каптов:
-    illegals: {
-
-        is_enabled: { type: Boolean, default: false }, // Включено ли?
-
-        // Тип сообщений бота
-        message_type: { type: String, default: "embed" },
-
-        // Список тригеров
-        triggers: [{
-            words: Array,
-            require_channel: String, 
-            log_channel: String
-        }]
     },
 
     // Система выдачи ролей

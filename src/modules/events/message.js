@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js'); // Используется дл
 const { DateTime } = require('luxon'); // Форматирование времени
 
 // Импортируем собственные модули
-const Guild = require('../../structures/models/Guild');
+const Guild = require('../../api/models/Guild');
 const getCommand = require('../../utils/getThing');
 
 // Экспортируем функцию. В параметрах client - бот, message - объект сообщения
@@ -31,7 +31,7 @@ module.exports = async (client, message) => {
         // Создаем регулярное выражение, включая слова-триггеры для системы
         let systemTrigger = new RegExp(`^(?:${guildSettings.give_role.trigger_words.join('|')})$`, "gi")
         if (systemTrigger.test(message.content)) {
-            return require('../giveRoles/createRequest').run(message, guildSettings)
+            return require('../giveRoles/createRequest').run({ message, guildSettings })
                 .catch((warning) => {
                     console.warn(`[GiveRole] [Warn] Произошла ошибка в коде создания запроса Время: ${
                         DateTime.local().toFormat('TT')}\nОшибка: ${warning.stack}`)

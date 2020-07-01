@@ -3,8 +3,8 @@ const { connect } = require('mongoose'); // База данных
 require('dotenv/config');
 
 // Импортируем модули отечественной разработки
-const Client = require('./structures/Client.js');
-const Guild = require('./structures/models/Guild');
+const Client = require('./structures/Client');
+const Guild = require('./api/models/Guild');
 
 // Оглашаем клиента
 const client = new Client(

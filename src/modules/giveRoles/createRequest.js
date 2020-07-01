@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js'); // Для отправки сообщений типа ембед
-const RoleRequests = require('../../structures/models/RoleRequests'); // Для логирования запросов
+const RoleRequests = require('../../api/models/RoleRequests'); // Для логирования запросов
 
-exports.run = async (message, guildSettings) => {
+exports.run = async ({ message, guildSettings }) => {
 
     // TODO: Добавить в БД возможность удалять сообщения автора, 
     // бота по интервалу или вообще не отвечать
@@ -21,7 +21,7 @@ exports.run = async (message, guildSettings) => {
             message.member.roles.cache.some(role => !guildSettings.give_role.banned.roles.includes(role.id))) {
 
             // Проверяем форму ника. Создаем регулярное выражение по тому, что указано в БД
-            let nickRegex = new RegExp(guildSettings.give_role.name_regexp, "i");
+            const nickRegex = new RegExp(guildSettings.give_role.name_regexp, "i");
 
             // Если ник не подходит по форме, отправить ошибку
             if (!nickRegex || !nickRegex.test(message.member.displayName)) {
@@ -47,7 +47,7 @@ exports.run = async (message, guildSettings) => {
             }
 
             // Ищем тег пользователя в базе данных
-            let tagInfo = guildSettings.give_role.tags ?
+            const tagInfo = guildSettings.give_role.tags ?
                 guildSettings.give_role.tags.find(tag => tag.names.includes(nickInfo[1])) : null;
 
 
@@ -69,10 +69,10 @@ exports.run = async (message, guildSettings) => {
             }
 
             // Поиск канала для отправки запроса
-            let requests_channel = message.guild.channels.cache.get(guildSettings.give_role.requests_channel) || null;
+            const requestsChannel = message.guild.channels.cache.get(guildSettings.give_role.requests_channel) || null;
 
             // Если канала нет, отправить ошибку об этом
-            if (!requests_channel) {
+            if (!requestsChannel) {
                 message.react(`🚫`);
                 return message.channel.send(new MessageEmbed()
                     .setColor('#ff3333')
@@ -81,21 +81,30 @@ exports.run = async (message, guildSettings) => {
             }
 
             // Если все подходит, отправить запрос в указанный канал
-            requests_channel.send(new MessageEmbed()
+            requestsChannel.send(new MessageEmbed()
                 .setColor(guildSettings.common.color)
                 .setTitle(`**📨 | Запрос роли**`)
-                .setFooter(message.guild.name, message.guild.iconURL())
 
                 // TODO: Обдумать стиль смайликов. Если можно, сделать кастомные на сервере бота
                 .addFields(
                     { name: `**Пользователь**`, value: `**${message.member}**`, inline: true },
                     { name: `**Никнейм**`, value: `**${nickInfo[0]}**`, inline: true },
-                    { name: `**Роли для выдачи**`, value: `**${tagInfo.give_roles.map(r => `<@&${r}>`).join('\n')}**` },
-                    { name: `**Канал отправки**`, value: `**${message.channel}**` },
-                    { name: `**Информация по выдаче**`, value: `**\`[✅] - выдать роль\n[❌] - отказать в выдачи роли\n[🗑️] - удалить сообщение\`**` },
+                    {
+                        name: `**Роли для выдачи**`, value: `**${tagInfo.give_roles.map(r => `<@&${r}>`)
+                            .join('\n')}**`, inline: true
+                    },
+                    { name: `**Канал отправки**`, value: `**${message.channel}**`, inline: true },
+                    {
+                        name: `**Информация по выдаче**`,
+                        value: "**`[✅] - выдать роль\n" +
+                            "[❌] - отказать в выдачи роли\n" +
+                            "[🔎] - проверить информацию\n" +
+                            "[🗑️] - удалить сообщение`**"
+                    },
                 )).then(async msg => {
                     await msg.react(`✅`);
                     await msg.react(`❌`);
+                    await msg.react(`🔎`);
                     await msg.react(`🗑️`);
                 })
 

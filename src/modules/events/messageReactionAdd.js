@@ -3,7 +3,7 @@ const { DateTime } = require('luxon'); // Форматирование врем�
 const { MessageEmbed } = require('discord.js');
 
 // Импортируем собственные модули
-const Guild = require('../../structures/models/Guild');
+const Guild = require('../../api/models/Guild');
 
 module.exports = async (client, reaction, reactedUser) => {
     // Если автор бот - выходим
@@ -28,10 +28,10 @@ module.exports = async (client, reaction, reactedUser) => {
         // Если в канале для запроса роли
         let requests_channel = message.guild.channels.cache.get(guildSettings.give_role.requests_channel);
         if (requests_channel && message.channel.id === requests_channel.id) {
-            require('../giveRoles/reactionAdd').run(client, reaction, reactedUser, guildSettings)
+            require('../giveRoles/reactionAdd').run({ client, reaction, reactedUser, guildSettings })
                 .catch((warning) => {
-                  //  console.warn(`[GiveRole] [Warn] Произошла ошибка в коде создания запроса Время: ${
-                    //    DateTime.local().toFormat('TT')}\nОшибка: ${warning.stack}`)
+                    console.warn(`[GiveRole] [Warn] Произошла ошибка в коде создания запроса Время: ${
+                        DateTime.local().toFormat('TT')}\nОшибка: ${warning.stack}`)
 
                     // Если автор команды - разработчик, отправить информацию об ошибке, иначе просто факт
                     if (client.isDev(reactedUser.id)) {

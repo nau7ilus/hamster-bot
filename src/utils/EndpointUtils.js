@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 
-const AuthLog = require('../structures/models/AuthLog');
-const User = require('../structures/models/Users');
+const AuthLog = require('../api/models/AuthLog');
+const User = require('../api/models/Users');
 const API_URL = 'https://discordapp.com/api';
 
 module.exports = class EndpointUtils {
