@@ -45,8 +45,7 @@ exports.run = async ({ message, guildSettings }) => {
 
       // Создаем массив с информацией по нику пользователя
       let nickInfo = message.member.displayName.match(nickRegex);
-      nickInfo[3] = nickInfo[3] + "_" + nickInfo[4];
-      nickInfo.splice(-1, 1);
+      nickInfo[0] = message.member.displayName;
 
       // Если в БД уже есть активный запрос от данного человека, отправить ошибку
       if (
@@ -125,7 +124,11 @@ exports.run = async ({ message, guildSettings }) => {
             // TODO: Обдумать стиль смайликов. Если можно, сделать кастомные на сервере бота
             .addFields(
               { name: `**Пользователь**`, value: `**${message.member}**`, inline: true },
-              { name: `**Никнейм**`, value: `**${nickInfo[0]}**`, inline: true },
+              {
+                name: `**Никнейм**`,
+                value: `**${nickInfo[0].replace(/[\`|\"|\*]/gi, "")}**`,
+                inline: true,
+              },
               {
                 name: `**Роли для выдачи**`,
                 value: `**${tagInfo.give_roles.map((r) => `<@&${r}>`).join("\n")}**`,
@@ -147,18 +150,17 @@ exports.run = async ({ message, guildSettings }) => {
           await msg.react(`❌`);
           await msg.react(`🔎`);
           await msg.react(`🗑️`);
+          // Сохраняем информацию о запросе в базу данных
+          await RoleRequests.create({
+            user: {
+              id: message.member.id,
+              nick_info: nickInfo,
+            },
+            guild_id: message.guild.id,
+            requested_channel: message.channel.id,
+            role_to_give: tagInfo.give_roles,
+          });
         });
-
-      // Сохраняем информацию о запросе в базу данных
-      await RoleRequests.create({
-        user: {
-          id: message.member.id,
-          nick_info: nickInfo,
-        },
-        guild_id: message.guild.id,
-        requested_channel: message.channel.id,
-        role_to_give: tagInfo.give_roles,
-      });
 
       // Если все удачно, отправить сообщение
       message.react(`✅`);

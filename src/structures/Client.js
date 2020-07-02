@@ -41,7 +41,6 @@ module.exports = class AdvancedClient extends Client {
       }
     }
     console.log(`[Commands] Загружено команд: ${total}`);
-    console.log(this.commands);
     return this;
   }
 
