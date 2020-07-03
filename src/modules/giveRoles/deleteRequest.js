@@ -16,7 +16,7 @@ exports.run = async ({
   if (!requestAuthor || !requestInfo || !tagInfo) {
     message.channel.send(
       guildSettings.give_role.message_type == "plain_text"
-        ? `**\`[Удаление] \`${reactedMember}\` удалил багнутый запрос роли\`**`
+        ? `**\`[🗑️ | Удаление] \`${reactedMember}\` удалил багнутый запрос роли\`**`
         : new MessageEmbed()
             .setColor("#b4c1d6")
             .setTitle("**🗑️ | Удаление запроса**")
@@ -48,12 +48,16 @@ exports.run = async ({
   message.channel.send(
     guildSettings.give_role.message_type == "plain_text"
       ? // prettier-ignore
-        `**\`[Удаление] \`${reactedMember}\` удалил запрос пользователя \`${requestAuthor
-			}\` с ником ${requestInfo.user.nick_info[0]}\`**`
-      : new MessageEmbed().setColor("#b4c1d6").setTitle("**🗑️ | Удаление запроса**").setDescription(
-          `**${reactedMember} удалил запрос пользователя ${ // prettier-ignore
-				  requestAuthor} с ником \`${requestInfo.user.nick_info[0]}\`**` // prettier-ignore
-        )
+        `**\`[🗑️ | Удаление]\` ${reactedMember} \`удалил запрос пользователя\` ${requestAuthor
+			} \`с ником ${requestInfo.user.nick_info[0].replace(/[`|"|*]/gi, "")}\`**`
+      : new MessageEmbed()
+          .setColor("#b4c1d6")
+          .setTitle("**🗑️ | Удаление запроса**")
+          .setDescription(
+            `**${reactedMember} удалил запрос пользователя ${ 
+				requestAuthor} с ником \`${requestInfo.user.nick_info[0]
+					.replace(/[`|"|*]/gi, "")}\`**` // prettier-ignore
+          )
   );
   requestInfo.remove();
   return message.delete();

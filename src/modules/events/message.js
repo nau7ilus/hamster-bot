@@ -1,10 +1,10 @@
 // Импортируем модули сторонних разработчиков
 const { MessageEmbed } = require("discord.js"); // Используется для отправки сообщений типа Embed
-const { DateTime } = require("luxon"); // Форматирование времени
 
 // Импортируем собственные модули
 const Guild = require("../../api/models/Guild");
 const getCommand = require("../../utils/getThing");
+const { onRunError } = require("../../utils");
 
 // Экспортируем функцию. В параметрах client - бот, message - объект сообщения
 module.exports = async (client, message) => {
@@ -37,49 +37,8 @@ module.exports = async (client, message) => {
     );
     if (systemTrigger.test(message.content)) {
       return require("../giveRoles/createRequest")
-        .run({ message, guildSettings })
-        .catch((warning) => {
-          console.warn(
-            `[GiveRole] [Warn] Произошла ошибка в коде создания запроса Время: ${DateTime.local().toFormat(
-              "TT"
-            )}\nОшибка: ${warning.stack}`
-          );
-
-          // Если автор команды - разработчик, отправить информацию об ошибке, иначе просто факт
-          if (client.isDev(message.author.id)) {
-            return message.channel.send(
-              new MessageEmbed()
-                .setColor("#ff3333")
-                .setDescription(`**Произошла ошибка в коде системы**`)
-                .addField(
-                  "**Отладка**",
-                  `**Автор: ${message.author} (\`${
-                    // prettier-ignore
-                    message.author.id
-                  }\`)\nСервер: **${message.guild.name}** (\`${
-                    // prettier-ignore
-                    message.guild.id
-                  }\`)\nВ канале: ${message.channel} (\`${message.channel.id})\`**`
-                ) // prettier-ignore
-                .addField("**Сообщение:**", messageToString)
-                .addField(
-                  "**Ошибка**",
-                  warning.stack.length > 1024
-                    ? warning.stack.substring(0, 1021) + "..."
-                    : warning.stack
-                )
-            );
-          } else {
-            return message.channel.send(
-              new MessageEmbed()
-                .setColor("#ff3333")
-                .setTitle("**🚫 | Ошибка**")
-                .setDescription(
-                  "**Произошла ошибка в коде команды. Сообщите разработчикам об этом**"
-                )
-            );
-          }
-        });
+        .run({ message, guildSettings, client })
+        .catch((warning) => onRunError({ client, warning, message }));
     }
   }
 
@@ -91,10 +50,8 @@ module.exports = async (client, message) => {
   message.content = message.content.replace(/@everyone/g, "**everyone**");
   message.content = message.content.replace(/@here/g, "**here**");
 
-  // На случай, если сообщение очень большое, заменим конец на 3 точки
-  const messageToString =
-    message.content.length > 1024 ? message.content.substring(0, 1021) + "..." : message.content;
-  const args = message.content.slice(thisPrefix.length).trim().split(/ +/g); // Получаем аргументы команды
+  // Делим сообщение на аргументы, убирая пробелы между словами. Получаем массив
+  const args = message.content.slice(thisPrefix.length).trim().split(/ +/g);
 
   // Находим команду в базе данных
   const cmd = await getCommand(client, "command", args[0].toLowerCase().normalize());
@@ -164,61 +121,23 @@ module.exports = async (client, message) => {
     }
 
     // Запускаем команду
-    return (
-      cmd
-        .run(client, message, args)
-
-        // Если есть ошибка в коде, отправить сообщение в канал разработчиков
-        .catch((warning) => {
-          console.warn(
-            `[Message] [Warn] Произошла ошибка в коде команды ${
-              cmd.name
-            } Время: ${DateTime.local().toFormat("TT")}\nОшибка: ${warning.stack}`
-          );
-
-          // Если автор команды - разработчик, отправить информацию об ошибке, иначе просто факт
-          if (client.isDev(message.author.id)) {
-            return message.channel.send(
-              new MessageEmbed()
-                .setColor("#ff3333")
-                .setDescription(`**Произошла ошибка в коде команды: \`${cmd.name}\`**`)
-                .addField(
-                  "**Отладка**",
-                  `**Автор: ${message.author} (\`${message.author.id}\`)\nСервер: **${ // prettier-ignore
-					  message.guild.name}** (\`${message.guild.id}\`)\nВ канале: ${ // prettier-ignore
-						  message.channel} (\`${message.channel.id})\`**` // prettier-ignore
-                )
-                .addField("**Сообщение:**", messageToString)
-                .addField(
-                  "**Ошибка**",
-                  warning.stack.length > 1024
-                    ? warning.stack.substring(0, 1021) + "..."
-                    : warning.stack
-                )
-            );
-          } else {
-            return message.channel.send(
-              new MessageEmbed()
-                .setColor("#ff3333")
-                .setTitle("**🚫 | Ошибка**")
-                .setDescription(
-                  "**Произошла ошибка в коде команды. Сообщите разработчикам об этом**"
-                )
-            );
-          }
-        })
-    );
+    return cmd
+      .run(client, message, args)
+      .catch((warning) => onRunError({ warning, client, message }));
   }
 
   // Функция для проверки прав у пользователя/бота
   function verifyPerms(command) {
+    // Создаем ссылку на метод
+    const has = Object.prototype.hasOwnProperty;
+
     // Создаем два массива, куда будем вставлять необходимые права
     const clientMissingPermissions = [];
     const userMissingPermissions = [];
 
     // Если у бота нет прав администратора на сервере, проверяем права для бота
     if (!message.guild.me.hasPermission("ADMINISTRATOR")) {
-      if (command.hasOwnProperty("clientPermissions")) {
+      if (has.call(command, "clientPermissions")) {
         command.clientPermissions.forEach((permission) => {
           if (!message.guild.me.hasPermission(permission, true, false, false))
             clientMissingPermissions.push(permission);
@@ -226,15 +145,13 @@ module.exports = async (client, message) => {
       }
 
       // Если необходимо проверить права пользователя, делаем это
-      if (command.hasOwnProperty("userPermissions")) {
+      if (has.call(command, "userPermissions")) {
         command.userPermissions.forEach((permission) => {
           if (!message.member.hasPermission(permission, true, false, false))
             userMissingPermissions.push(permission);
         });
       }
     }
-
-    // Возвращаем 2 массива
     return {
       client: clientMissingPermissions,
       user: userMissingPermissions,

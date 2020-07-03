@@ -59,30 +59,30 @@ exports.run = async ({
   message.channel.send(
     guildSettings.give_role.message_type == "plain_text"
       ? // prettier-ignore
-        `**\`[Отклонение] \`${reactedMember}\` отклонил запрос пользователя \`${requestAuthor
-			}\` с ником ${requestInfo.user.nick_info[0].replace(/[\`|\"|\*]/gi, "")}\`**`
+        `**\`[❌ | Отклонение] \`${reactedMember}\` отклонил запрос пользователя \`${requestAuthor
+			}\` с ником ${requestInfo.user.nick_info[0].replace(/[`|"|*]/gi, "")}\`**`
       : new MessageEmbed()
           .setColor("#e34536")
           .setTitle("**❌ | Отклонение запроса**")
           .setDescription(
             `**Модератор ${reactedMember} отклонил запрос пользователя ${ // prettier-ignore
-				  requestAuthor} с ником \`"${requestInfo.user.nick_info[0]
-					.replace(/[\`|\"|\*]/gi, "")}"\`**` // prettier-ignore
+				requestAuthor} с ником \`"${requestInfo.user.nick_info[0]
+					.replace(/[`|"|*]/gi, "")}"\`**` // prettier-ignore
           )
   );
   channel.send(guildSettings.give_role.message_type == "plain_text" ?
 		// prettier-ignore
-			`**\`[Отклонение]\` ${requestAuthor},\` модератор \`${ // prettier-ignore
+			`**\`[❌ | Отклонение]\` ${requestAuthor},\` модератор \`${ // prettier-ignore
 				reactedMember} \`отклонил ваш запрос на получение роли "${requestInfo.role_to_give.map(
 					role => message.guild.roles.cache.get(role) ? message.guild.roles.cache.get(role).name : "Не найдено").join(", ")
-				}" с ником "${requestInfo.user.nick_info[0].replace(/[\`|\"|\*]/gi, "")}"\`**` : // prettier-ignore
+				}" с ником "${requestInfo.user.nick_info[0].replace(/[`|"|*]/gi, "")}"\`**` : // prettier-ignore
 			new MessageEmbed()
 				.setColor('#e34536')
 				.setTitle("**❌ | Отклонение запроса**")
 				.setDescription(`**${requestAuthor}, модератор ${ // prettier-ignore
 					reactedMember} отклонил ваш запрос на получение роли ${requestInfo.role_to_give.map(
 					role => `<@&${role}>`).join(", ")} с ником \`${
-					requestInfo.user.nick_info[0].replace(/[\`|\"|\*]/gi, "")}\`**`)) // prettier-ignore
+					requestInfo.user.nick_info[0].replace(/[`|"|*]/gi, "")}\`**`)) // prettier-ignore
   requestInfo.remove();
   return message.delete();
 };

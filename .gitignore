@@ -5,3 +5,4 @@ start.cmd
 .DS_Store
 .env
 nodemon.json
+*.log

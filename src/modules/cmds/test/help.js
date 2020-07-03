@@ -91,9 +91,9 @@ ${client.commands.map((c) => `**${c.name}** : ${c.description}`).join("\n\n")}**
         MANAGE_EMOJIS: "Управление эмодзи",
       };
       let ret = [];
-      for (perm in perms) {
+      perms.forEach((perm) => {
         ret.push(loc[perm]);
-      }
+      });
       return ret;
     }
   }

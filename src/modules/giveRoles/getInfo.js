@@ -53,8 +53,8 @@ exports.run = async ({
       whatChanged.push("- Ошибка при поиске ника в теле запроса");
     } else {
       if (
-        embedNick !== requestAuthor.displayName.replace(/[\`|\"|\*]/gi, "") ||
-        embedNick !== requestInfo.user.nick_info[0].replace(/[\`|\"|\*]/gi, "")
+        embedNick !== requestAuthor.displayName.replace(/[`|"|*]/gi, "") ||
+        embedNick !== requestInfo.user.nick_info[0].replace(/[`|"|*]/gi, "")
       ) {
         whatChanged.push("- Ник пользователя отличается с тем, что в базе данных");
       }
@@ -109,7 +109,7 @@ exports.run = async ({
   editRequestMessage({
     message,
     guildSettings,
-    member: requestAuthor || `<@!${embedAuthorId}>`,
+    member: requestAuthor || `<@!${embedAuthorId}>`, // eslint-disable-line
     rolesToGive,
     channel,
     whatChanged,

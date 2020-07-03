@@ -1,9 +1,5 @@
-// Импортируем модули сторонних разработчиков
-const { DateTime } = require("luxon"); // Форматирование времени
-const { MessageEmbed } = require("discord.js");
-
-// Импортируем собственные модули
-const Guild = require("../../api/models/Guild");
+const Guild = require("../../api/models/Guild"); // Модель сервера
+const { onRunError } = require("../../utils");
 
 module.exports = async (client, reaction, reactedUser) => {
   // Если автор бот - выходим
@@ -36,48 +32,7 @@ module.exports = async (client, reaction, reactedUser) => {
     if (requests_channel && message.channel.id === requests_channel.id) {
       require("../giveRoles/reactionAdd")
         .run({ client, reaction, reactedUser, guildSettings })
-        .catch((warning) => {
-          console.warn(
-            `[GiveRole] [Warn] Произошла ошибка в коде создания запроса Время: ${DateTime.local().toFormat(
-              "TT"
-            )}\nОшибка: ${warning.stack}`
-          );
-
-          // Если автор команды - разработчик, отправить информацию об ошибке, иначе просто факт
-          if (client.isDev(reactedUser.id)) {
-            return message.channel.send(
-              new MessageEmbed()
-                .setColor("#ff3333")
-                .setDescription(`**Произошла ошибка в коде системы**`)
-                .addField(
-                  "**Отладка**",
-                  `**Автор: ${reactedUser} (\`${reactedUser.id}\`)\nСервер: **${
-                    // prettier-ignore
-                    message.guild.name
-                  }** (\`${
-                    message.guild.id // prettier-ignore
-                  }\`)\nВ канале: ${message.channel} (\`${message.channel.id})\`**`
-                ) // prettier-ignore
-                .addField(
-                  "**Ошибка**",
-                  warning.stack.length > 1024
-                    ? warning.stack.substring(0, 1021) + "..."
-                    : warning.stack
-                )
-            );
-          } else {
-            console.log(2);
-
-            return message.channel.send(
-              new MessageEmbed()
-                .setColor("#ff3333")
-                .setTitle("**🚫 | Ошибка**")
-                .setDescription(
-                  "**Произошла ошибка в коде команды. Сообщите разработчикам об этом**"
-                )
-            );
-          }
-        });
+        .catch((warning) => onRunError({ client, warning, message }));
     }
   }
 };

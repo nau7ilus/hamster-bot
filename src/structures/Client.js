@@ -65,9 +65,7 @@ module.exports = class AdvancedClient extends Client {
       const eventFile = files[file];
       if (!eventFile.endsWith(".js")) continue;
       if (!eventFile)
-        throw new Error(
-          `Название события или его путь указаны неверно\nПуть : ${path}\nНазвание:${name}`
-        );
+        throw new Error(`Название события или его путь указаны неверно\nПуть : ${path}`);
 
       const event = require(`../modules/events/${eventFile}`);
       const eventName = eventFile.split(".")[0];

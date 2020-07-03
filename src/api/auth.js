@@ -15,9 +15,9 @@ module.exports = class WebRoute extends Route {
 
   register(app) {
     const router = Router();
-    router.post("/addrole", EndpointUtils.addRole(this, false, true), (req, res) => {});
+    router.post("/addrole", EndpointUtils.addRole(this, false, true));
 
-    router.post("/removerole", EndpointUtils.removeRole(this, false, true), (req, res) => {});
+    router.post("/removerole", EndpointUtils.removeRole(this, false, true));
 
     app.use(this.path, router);
   }
