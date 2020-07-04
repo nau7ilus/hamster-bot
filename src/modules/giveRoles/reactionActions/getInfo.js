@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const { sendErrorMessage } = require("../../utils");
+const { sendErrorMessage } = require("../../../utils");
 
 exports.run = async ({
   tagInfo,
@@ -19,6 +19,7 @@ exports.run = async ({
       content: "бот не может найти данные о запросе",
       member: reactedMember,
       guildSettings,
+      react: false,
     });
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);
@@ -33,16 +34,19 @@ exports.run = async ({
     // Отправим сообщение об ошибке
     sendErrorMessage({
       message,
-      content: "у вас нет прав на управление данным запроса",
+      content: "у вас нет прав на управление данного запроса",
       member: reactedMember,
       guildSettings,
+      react: false,
     });
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);
   }
 
   const whatChanged = [];
-  let rolesToGive = tagInfo.give_roles.map((r) => `<@&${r}>`).join("\n");
+  let rolesToGive = tagInfo.give_roles
+    .map((r) => (message.guild.roles.cache.get(r) ? `<@&${r}>` : "Не найдено"))
+    .join("\n");
   let channel = message.guild.channels.cache.get(requestInfo.requested_channel) || null;
 
   if (requestAuthor) {
@@ -78,11 +82,11 @@ exports.run = async ({
           requestInfo.user.nick_info = nickInfo;
 
           // Проверка ролей
-          rolesToGive = newTagInfo.give_roles.map((r) => `<@&${r}>`).join("\n");
+          //rolesToGive = newTagInfo.give_roles.map((r) => `<@&${r}>`).join("\n");
           const roles = newTagInfo.give_roles.map(
             (role) => message.guild.roles.cache.get(role) || null
           );
-          if (!roles.find((role) => !role.editable)) {
+          if (roles.find((role) => role && role.editable)) {
             whatChanged.push(`+ У бота есть права для выдачи необходимых ролей`);
           } else {
             whatChanged.push(`- У бота нет прав для выдачи необходимых ролей`);
@@ -129,7 +133,7 @@ function editRequestMessage({ message, guildSettings, member, rolesToGive, chann
           value: `**${member.displayName ? member.displayName : "Не найдено"}**`,
           inline: true,
         },
-        { name: `**Роли для выдачи**`, value: `**${rolesToGive || "Не найдено"}**`, inline: true },
+        { name: `**Роли для выдачи**`, value: `**${rolesToGive}**`, inline: true },
         { name: `**Канал отправки**`, value: `**${channel || "Удален"}**`, inline: true },
         { name: "**Примечания**", value: "**```diff\n" + whatChanged.join("\n") + "```**" },
         {

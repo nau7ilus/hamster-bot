@@ -1,18 +1,34 @@
 const { MessageEmbed } = require("discord.js");
 const { DateTime } = require("luxon"); // Форматирование времени
 
-exports.sendErrorMessage = ({ message, content, member, guildSettings, emoji = "🚫" }) => {
+// Рандомный элемент из массива
+exports.random = (array) => {
+  return array[Math.floor(Math.random() * array.length)];
+};
+
+exports.sendErrorMessage = ({
+  message,
+  content,
+  member,
+  guildSettings,
+  emoji,
+  react = true,
+  color,
+}) => {
+  if (!emoji) emoji = exports.random(["😥", "😔", "🤔", "⚠️", "⛔", "🚫"]);
+  if (react) message.react(emoji);
   message.channel
     .send(
       guildSettings.give_role.message_type == "plain_text"
         ? `**\`[${emoji} | Ошибка] \`${member}\`, ${content}\`**`
         : new MessageEmbed()
-            .setColor("#ff3333")
+            .setColor(color || guildSettings.common.color)
             .setTitle(`**${emoji} | Произошла ошибка**`)
-            .setAuthor(member.displayName, member.user.displayAvatarURL())
+            // .setAuthor(member.displayName, member.user.displayAvatarURL())
             .setDescription(`**${member}, ${content}**`)
+            .setFooter("HamsterBot | Ошибка", message.guild.me.user.displayAvatarURL())
     )
-    .then((msg) => setTimeout(() => msg.delete(), 8000));
+    .then((msg) => setTimeout(() => msg.delete(), 1 * 60 * 1000));
 };
 
 exports.onRunError = ({ client, warning, message }) => {
@@ -110,9 +126,9 @@ exports.localizePerm = (perm) => {
   return russianNames[perm];
 };
 
-exports.missingPermsError = ({ message, channel, missingPerms, emoji = "🔇" }) => {
+exports.missingPermsError = ({ message, channel, missingPerms, emoji = "🔇", react = true }) => {
   const canIgnore = message.channel.id !== channel.id;
-  if (!missingPerms.includes("ADD_REACTIONS") || canIgnore) message.react(emoji);
+  if (!missingPerms.includes("ADD_REACTIONS") || (canIgnore && !react)) message.react(emoji);
   if (!missingPerms.includes("SEND_MESSAGES") || canIgnore)
     return message.channel
       .send(
@@ -135,5 +151,5 @@ exports.missingPermsError = ({ message, channel, missingPerms, emoji = "🔇" })
               channel.name +
               "'`**"
       )
-      .then((msg) => setTimeout(() => msg.delete(), 15000));
+      .then((msg) => setTimeout(() => msg.delete(), 25 * 1000));
 };

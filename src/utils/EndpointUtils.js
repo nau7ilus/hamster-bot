@@ -33,7 +33,7 @@ module.exports = class EndpointUtils {
   }
 
   static addRole({ client }) {
-    return async (req, res, next) => {
+    return async (req, res) => {
       const authorization = req.get("Authorization");
 
       if (!authorization) {

@@ -26,6 +26,4 @@ module.exports = class Route {
 
     this.register(app);
   }
-
-  register(app) {}
 };

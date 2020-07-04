@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const { sendErrorMessage } = require("../../utils");
+const { sendErrorMessage, checkClientPermissions, missingPermsError } = require("../../../utils");
 
 exports.run = async ({
   tagInfo,
@@ -54,6 +54,15 @@ exports.run = async ({
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);
   }
+
+  // Проверяем права бота в канале для отправки сообщения
+  const missingPerms = checkClientPermissions(channel, [
+    "SEND_MESSAGES",
+    "EMBED_LINKS",
+    "VIEW_CHANNEL",
+  ]);
+  if (missingPerms.length > 0)
+    return missingPermsError({ message, missingPerms, channel, react: false });
 
   // Отклоняем запрос
   message.channel.send(

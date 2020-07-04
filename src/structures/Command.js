@@ -1,21 +1,21 @@
 const { readdirSync } = require("fs");
 
 module.exports = class Command {
-  #dirs;
-
   constructor(props, runFunction) {
     this.name = props.name;
     this.description = props.description;
     this.run = runFunction;
-    if (props.hasOwnProperty("category")) {
+
+    const has = Object.prototype.hasOwnProperty;
+    if (has.call(props, "category")) {
       this.category = props.category;
     } else {
-      this.#dirs = readdirSync("./src/modules/cmds");
-      this.#dirs.forEach((dir) => {
+      this.dirs = readdirSync("./src/modules/cmds");
+      this.dirs.forEach((dir) => {
         const category = readdirSync(`./src/modules/cmds/${dir}`);
         if (category.includes(`${this.name}.js`)) this.category = dir;
       });
-      this.#dirs = undefined;
+      this.dirs = undefined;
     }
 
     if (props.usage) this.usage = props.usage;

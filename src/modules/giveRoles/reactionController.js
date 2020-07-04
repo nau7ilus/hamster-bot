@@ -1,4 +1,5 @@
 const RoleRequests = require("../../api/models/RoleRequests"); // Для логирования запросов
+const { checkClientPermissions, missingPermsError } = require("../../utils");
 
 /**
  * TODO: При выходе пользователя с сервера, убирать все его заявки в БД
@@ -24,6 +25,22 @@ exports.run = async ({ client, reaction, reactedUser, guildSettings }) => {
   const embedName = message.embeds[0].title || null;
   if (!embedName || embedName !== "**📨 | Запрос роли**") return;
 
+  // Проверяем права бота в канале запросов
+  const missingPerms = checkClientPermissions(message.channel, [
+    "SEND_MESSAGES",
+    "ADD_REACTIONS",
+    "EMBED_LINKS",
+    "MANAGE_MESSAGES",
+    "VIEW_CHANNEL",
+  ]);
+  if (missingPerms.length > 0)
+    return missingPermsError({
+      message,
+      missingPerms,
+      channel: message.channel,
+      react: false,
+    });
+
   // Получаем пользователя с запроса
   const embedAuthorId = /(?<=<@.?)\d+(?=>)/.test(message.embeds[0].fields[0].value)
     ? message.embeds[0].fields[0].value.match(/(?<=<@.?)\d+(?=>)/)[0]
@@ -42,10 +59,10 @@ exports.run = async ({ client, reaction, reactedUser, guildSettings }) => {
     ? guildSettings.give_role.tags.find((tag) => tag.names.includes(requestInfo.user.nick_info[1]))
     : null;
 
-  if (emoji.name == "✅") return run(require("./acceptRequest"));
-  if (emoji.name == "🔎") return run(require("./getInfo"));
-  if (emoji.name == "❌") return run(require("./rejectRequest"));
-  if (emoji.name == "🗑️") return run(require("./deleteRequest"));
+  if (emoji.name == "✅") return run(require("./reactionActions/acceptRequest"));
+  if (emoji.name == "🔎") return run(require("./reactionActions/getInfo"));
+  if (emoji.name == "❌") return run(require("./reactionActions/rejectRequest"));
+  if (emoji.name == "🗑️") return run(require("./reactionActions/deleteRequest"));
 
   function run(path) {
     return path.run({

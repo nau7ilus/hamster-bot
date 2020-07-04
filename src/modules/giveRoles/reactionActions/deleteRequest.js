@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const { sendErrorMessage } = require("../../utils");
+const { sendErrorMessage } = require("../../../utils");
 
 exports.run = async ({
   tagInfo,
@@ -39,6 +39,7 @@ exports.run = async ({
       content: "у вас нет прав на удаление данного запроса",
       member: reactedMember,
       guildSettings,
+      react: false,
     });
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);

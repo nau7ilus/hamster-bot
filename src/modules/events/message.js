@@ -90,8 +90,9 @@ module.exports = async (client, message) => {
             .setTitle(`**Эта команда доступна только на сервере**`)
         );
 
-        return console.log(`[Message] ${message.author.tag} использовал команду ${cmd.name}. Ошибка: команда доступна только на сервере.
-                    }`);
+        return console.log(
+          `[Message] ${message.author.tag} использовал команду ${cmd.name}. Ошибка: команда доступна только на сервере.`
+        );
       }
     } else {
       // Логируем использование команды
@@ -122,7 +123,7 @@ module.exports = async (client, message) => {
 
     // Запускаем команду
     return cmd
-      .run(client, message, args)
+      .run(client, message, args, guildSettings)
       .catch((warning) => onRunError({ warning, client, message }));
   }
 

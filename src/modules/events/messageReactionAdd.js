@@ -30,7 +30,7 @@ module.exports = async (client, reaction, reactedUser) => {
       guildSettings.give_role.requests_channel
     );
     if (requests_channel && message.channel.id === requests_channel.id) {
-      require("../giveRoles/reactionAdd")
+      require("../giveRoles/reactionController")
         .run({ client, reaction, reactedUser, guildSettings })
         .catch((warning) => onRunError({ client, warning, message }));
     }

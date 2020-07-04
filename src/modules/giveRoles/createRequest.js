@@ -1,6 +1,6 @@
 const { MessageEmbed } = require("discord.js"); // Для отправки сообщений типа ембед
-const RoleRequests = require("../../api/models/RoleRequests"); // Для логирования запросов
 const { checkClientPermissions, missingPermsError, sendErrorMessage } = require("../../utils");
+const RoleRequests = require("../../api/models/RoleRequests"); // Для логирования запросов
 
 exports.run = async ({ message, guildSettings }) => {
   // TODO: Добавить в БД возможность удалять сообщения автора,
@@ -48,7 +48,6 @@ exports.run = async ({ message, guildSettings }) => {
 
       // Если ник не подходит по форме, отправить ошибку
       if (!nickRegex || !nickRegex.test(message.member.displayName)) {
-        message.react("🚫");
         return sendErrorMessage({
           message,
           member: message.member,
@@ -75,6 +74,7 @@ exports.run = async ({ message, guildSettings }) => {
           member: message.member,
           guildSettings,
           emoji: "⏱️",
+          color: "#24f0ff",
           content: "вы уже отправляли запрос. Ожидайте рассмотрения заявки модераторами",
         });
       }
@@ -86,7 +86,6 @@ exports.run = async ({ message, guildSettings }) => {
 
       // Если указанного тега нет, отправить сообщение об ошибке
       if (!tagInfo) {
-        message.react(`🚫`);
         return sendErrorMessage({
           message,
           member: message.member,
@@ -95,8 +94,7 @@ exports.run = async ({ message, guildSettings }) => {
         });
       }
 
-      if (!message.guild.roles.cache.some((r) => tagInfo.give_roles.includes(r.id))) {
-        message.react(`🚫`);
+      if (!message.guild.roles.cache.some((role) => tagInfo.give_roles.includes(role.id))) {
         return sendErrorMessage({
           message,
           member: message.member,
@@ -106,13 +104,22 @@ exports.run = async ({ message, guildSettings }) => {
         });
       }
 
+      // Проверим, есть ли у пользователя уже роли, которые предусматривает тег
+      if (checkUserRoles(message.member, tagInfo.give_roles)) {
+        return sendErrorMessage({
+          message,
+          member: message.member,
+          guildSettings,
+          content: "у вас уже есть роли, которые предусматривает данный тег",
+        });
+      }
+
       // Поиск канала для отправки запроса
       const requestsChannel =
         message.guild.channels.cache.get(guildSettings.give_role.requests_channel) || null;
 
       // Если канала нет, отправить ошибку об этом
       if (!requestsChannel) {
-        message.react(`🚫`);
         return sendErrorMessage({
           message,
           member: message.member,
@@ -129,7 +136,6 @@ exports.run = async ({ message, guildSettings }) => {
         "MANAGE_MESSAGES",
         "VIEW_CHANNEL",
       ]);
-
       if (requestChannelPerms.length > 0)
         return missingPermsError({
           message,
@@ -201,7 +207,6 @@ exports.run = async ({ message, guildSettings }) => {
       );
     } else {
       // Если у пользователя нет прав использовать систему ролей, отправить сообщение
-      message.react(`🚫`);
       return sendErrorMessage({
         message,
         member: message.member,
@@ -211,7 +216,6 @@ exports.run = async ({ message, guildSettings }) => {
     }
   } else {
     // Если используется в запрещенном канале, отправить сообщение
-    message.react(`🚫`);
     return sendErrorMessage({
       message,
       member: message.member,
@@ -220,3 +224,13 @@ exports.run = async ({ message, guildSettings }) => {
     });
   }
 };
+
+function checkUserRoles(member, roles) {
+  const avaiableRoles = [];
+  roles.forEach((role) => {
+    if (member.roles.cache.some((r) => r.id == role)) {
+      avaiableRoles.push(role);
+    }
+  });
+  return avaiableRoles.length == roles.length;
+}

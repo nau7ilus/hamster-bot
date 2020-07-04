@@ -1,6 +1,7 @@
 // Переделать под класс
 module.exports = async (client, dataType, text) => {
-  const message = text.hasOwnProperty("content") && text.content instanceof String ? text : null;
+  const has = Object.prototype.hasOwnProperty;
+  const message = has.call(text, "content") && text.content instanceof String ? text : null;
 
   switch (dataType) {
     case "command":
@@ -63,10 +64,10 @@ module.exports = async (client, dataType, text) => {
       );
     case "message":
       if (text.length < 7) return false;
-      const m = await message.channel.fetchMessage(text);
+      const m = await message.channel.fetchMessage(text); // eslint-disable-line
       if (m) return m;
 
-      const url = message.replace("https://discordapp.com/channels/", "").split("/");
+      const url = message.replace("https://discordapp.com/channels/", "").split("/"); // eslint-disable-line
       if (message.startsWith("https") && client.channels.cache.has(url[1])) {
         return (await client.channels.cache.get(url[1]).fetchMessage(url[2])) || false;
       }
