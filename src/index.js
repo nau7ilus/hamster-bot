@@ -1,6 +1,5 @@
 // Импортируем модули сторонних разработчиков
 const { connect } = require("mongoose"); // База данных
-require("dotenv/config");
 
 // Импортируем модули отечественной разработки
 const Client = require("./structures/Client");

@@ -60,9 +60,10 @@ exports.run = async ({ client, reaction, reactedUser, guildSettings }) => {
     : null;
 
   if (emoji.name == "✅") return run(require("./reactionActions/acceptRequest"));
-  if (emoji.name == "🔎") return run(require("./reactionActions/getInfo"));
-  if (emoji.name == "❌") return run(require("./reactionActions/rejectRequest"));
-  if (emoji.name == "🗑️") return run(require("./reactionActions/deleteRequest"));
+  else if (emoji.name == "🔎") return run(require("./reactionActions/getInfo"));
+  else if (emoji.name == "❌") return run(require("./reactionActions/rejectRequest"));
+  else if (emoji.name == "🗑️") return run(require("./reactionActions/deleteRequest"));
+  else reaction.users.remove(reactedMember);
 
   function run(path) {
     return path.run({

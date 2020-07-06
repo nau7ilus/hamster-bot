@@ -20,6 +20,7 @@ exports.run = async ({
       content: "бот не может найти данные о запросе",
       member: reactedMember,
       guildSettings,
+      react: false,
     });
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);
@@ -36,6 +37,7 @@ exports.run = async ({
       content: "у вас нет прав на отклонение данного запросом",
       member: reactedMember,
       guildSettings,
+      react: false,
     });
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);
@@ -50,6 +52,7 @@ exports.run = async ({
       content: "ошибка при поиске канала отправки",
       member: reactedMember,
       guildSettings,
+      react: false,
     });
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);
