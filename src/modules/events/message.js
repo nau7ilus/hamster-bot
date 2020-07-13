@@ -121,6 +121,10 @@ module.exports = async (client, message) => {
       }
     }
 
+    // Бот начинает писать в канал на секунду
+    message.channel.startTyping();
+    setTimeout(() => message.channel.stopTyping(true), 1000);
+
     // Запускаем команду
     return cmd
       .run(client, message, args, guildSettings)
