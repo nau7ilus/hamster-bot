@@ -1,11 +1,28 @@
 const { MessageEmbed } = require("discord.js");
-const { DateTime } = require("luxon"); // Форматирование времени
+const { DateTime } = require("luxon");
 
-// Рандомный элемент из массива
+// TODO: Перенести получение команды с ./src/utils/getThing.js сюда и тот файл удалить
+
+/**
+ * Получаем случайное значение из массива
+ * @param {Array} array
+ * @return {any} Рандомное значение из массива
+ */
 exports.random = (array) => {
   return array[Math.floor(Math.random() * array.length)];
 };
 
+/**
+ * Отправка сообщения об ошибке
+ * @param {Object} params Параметры функции
+ * @param {Message} params.message
+ * @param {string} params.content Текст ошибки
+ * @param {GuildMember} params.member Пользователь
+ * @param {guildSettings} params.guildSettings Настройки сервера в базе данных бота
+ * @param {string} [params.emoji] Эмодзи
+ * @param {boolean} [params.react=true] Ставить ли реакцию на сообщение
+ * @param {(string|number)} [param.color=guildSettings.common.color] Цвет панели сообщения
+ */
 exports.sendErrorMessage = ({
   message,
   content,
@@ -24,13 +41,19 @@ exports.sendErrorMessage = ({
         : new MessageEmbed()
             .setColor(color || guildSettings.common.color)
             .setTitle(`**${emoji} | Произошла ошибка**`)
-            // .setAuthor(member.displayName, member.user.displayAvatarURL())
             .setDescription(`**${member}, ${content}**`)
             .setFooter("HamsterBot | Ошибка", message.guild.me.user.displayAvatarURL())
     )
-    .then((msg) => setTimeout(() => msg.delete(), 1 * 60 * 1000));
+    .then((msg) => setTimeout(() => msg.delete(), 60 * 1000));
 };
 
+/**
+ * На случай ошибки при запуске системы/команды
+ * @param {Object} params Параметры функции
+ * @param {Client} client Бот
+ * @param {Error} warning Объект ошибки
+ * @param {Message} message Объект сообщения
+ */
 exports.onRunError = ({ client, warning, message }) => {
   console.warn(
     `[GiveRole] [Warn] Произошла ошибка в коде создания запроса Время: ${DateTime.local().toFormat(
@@ -74,6 +97,12 @@ exports.onRunError = ({ client, warning, message }) => {
   }
 };
 
+/**
+ * Проверить права бота в определенном канале
+ * @param {TextChannel} channel Канал
+ * @param {Array} permissions Список из названий прав, которые необходимо проверить
+ * @return {Array} Список названий прав, которых нет у бота
+ */
 exports.checkClientPermissions = (channel, permissions) => {
   // Список недостающих прав
   const clientMissingPermissions = [];
@@ -88,6 +117,10 @@ exports.checkClientPermissions = (channel, permissions) => {
   return clientMissingPermissions;
 };
 
+/**
+ * Перевод права на русский язык
+ * @param {string} perm Название права на английском
+ */
 exports.localizePerm = (perm) => {
   const russianNames = {
     CREATE_INSTANT_INVITE: "Создавать приглашения",
@@ -126,6 +159,15 @@ exports.localizePerm = (perm) => {
   return russianNames[perm];
 };
 
+/**
+ * Отправка сообщения о том, что нехватает прав
+ * @param {Object} params Параметры функции
+ * @param {Message} params.message Сообщение
+ * @param {TextChannel} params.channel Текстовый канал
+ * @param {Array} params.missingPerms Список недостающих прав
+ * @param {string} [params.emoji="🔇"] Эмодзи в названии собщения
+ * @param {boolean} [params.react=true] Ставить ли реакцию на сообщение
+ */
 exports.missingPermsError = ({ message, channel, missingPerms, emoji = "🔇", react = true }) => {
   const canIgnore = message.channel.id !== channel.id;
   if (!missingPerms.includes("ADD_REACTIONS") || (canIgnore && !react)) message.react(emoji);
