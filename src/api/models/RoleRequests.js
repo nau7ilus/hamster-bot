@@ -19,14 +19,6 @@ const RequestSchema = new Schema(
     role_to_give: {
       type: Array,
     },
-    date: {
-      type: Date,
-      default: Date.now,
-    },
-    status: {
-      type: String,
-      default: `poll`,
-    },
   },
   {
     versionKey: false,
