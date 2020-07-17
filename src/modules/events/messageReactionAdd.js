@@ -17,7 +17,7 @@ module.exports = async (client, reaction, reactedUser) => {
   // Проверяем, включена ли система выдачи ролей
   if (guildData && guildData.give_role.is_enabled && guildData.give_role.requests_channel) {
     // Если в канале для запроса роли
-    let requests_channel = message.guild.channels.cache.get(guildData.give_role.requests_channel);
+    const requests_channel = message.guild.channels.cache.get(guildData.give_role.requests_channel);
     if (requests_channel && message.channel.id === requests_channel.id) {
       require("../giveRoles/reactionController")
         .run({ client, reaction, reactedUser, guildData })
