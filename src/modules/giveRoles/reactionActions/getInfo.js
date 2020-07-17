@@ -6,7 +6,7 @@ exports.run = async ({
   requestInfo,
   reaction,
   requestAuthor,
-  guildSettings,
+  guildData,
   reactedMember,
 }) => {
   const { message } = reaction;
@@ -18,7 +18,7 @@ exports.run = async ({
       message,
       content: "бот не может найти данные о запросе",
       member: reactedMember,
-      guildSettings,
+      guildData,
       react: false,
     });
     // Удалим реакцию пользователя
@@ -36,7 +36,7 @@ exports.run = async ({
       message,
       content: "у вас нет прав на управление данного запроса",
       member: reactedMember,
-      guildSettings,
+      guildData,
       react: false,
     });
     // Удалим реакцию пользователя
@@ -63,7 +63,7 @@ exports.run = async ({
         whatChanged.push("- Ник пользователя отличается с тем, что в базе данных");
       }
 
-      const nickRegex = new RegExp(guildSettings.give_role.name_regexp, "i");
+      const nickRegex = new RegExp(guildData.give_role.name_regexp, "i");
       // Если ник не подходит по форме, отправить ошибку
       if (!nickRegex || !nickRegex.test(requestAuthor.displayName)) {
         whatChanged.push("- Ник пользователя не проходит проверку на форму");
@@ -74,8 +74,8 @@ exports.run = async ({
         nickInfo[0] = requestAuthor.displayName;
 
         // Поиск тега
-        const newTagInfo = guildSettings.give_role.tags
-          ? guildSettings.give_role.tags.find((tag) => tag.names.includes(nickInfo[1]))
+        const newTagInfo = guildData.give_role.tags
+          ? guildData.give_role.tags.find((tag) => tag.names.includes(nickInfo[1]))
           : null;
         if (newTagInfo) {
           whatChanged.push(`+ Обнаружен тег ${nickInfo[1]}`);
@@ -112,7 +112,7 @@ exports.run = async ({
 
   editRequestMessage({
     message,
-    guildSettings,
+    guildData,
     member: requestAuthor || `<@!${embedAuthorId}>`, // eslint-disable-line
     rolesToGive,
     channel,
@@ -121,10 +121,10 @@ exports.run = async ({
   return reaction.users.remove(reactedMember);
 };
 
-function editRequestMessage({ message, guildSettings, member, rolesToGive, channel, whatChanged }) {
+function editRequestMessage({ message, guildData, member, rolesToGive, channel, whatChanged }) {
   message.edit(
     new MessageEmbed()
-      .setColor(guildSettings.common.color)
+      .setColor(guildData.common.color)
       .setTitle("**📨 | Запрос роли**")
       .addFields(
         { name: `**Пользователь**`, value: `**${member}**`, inline: true },

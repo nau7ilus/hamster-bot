@@ -6,7 +6,7 @@ exports.run = async ({
   requestInfo,
   reaction,
   requestAuthor,
-  guildSettings,
+  guildData,
   reactedMember,
 }) => {
   // Получим сообщение и эмодзи из реакции
@@ -15,7 +15,7 @@ exports.run = async ({
   // Если не было пользователя, написать об багнутом запросе
   if (!requestAuthor || !requestInfo || !tagInfo) {
     message.channel.send(
-      guildSettings.give_role.message_type == "plain_text"
+      guildData.give_role.message_type == "plain_text"
         ? `**\`[🗑️ | Удаление] \`${reactedMember}\` удалил багнутый запрос роли\`**`
         : new MessageEmbed()
             .setColor("#b4c1d6")
@@ -38,7 +38,7 @@ exports.run = async ({
       message,
       content: "у вас нет прав на удаление данного запроса",
       member: reactedMember,
-      guildSettings,
+      guildData,
       react: false,
     });
     // Удалим реакцию пользователя
@@ -47,7 +47,7 @@ exports.run = async ({
 
   // Удаляем запрос
   message.channel.send(
-    guildSettings.give_role.message_type == "plain_text"
+    guildData.give_role.message_type == "plain_text"
       ? // prettier-ignore
         `**\`[🗑️ | Удаление]\` ${reactedMember} \`удалил запрос пользователя\` ${requestAuthor
 			} \`с ником ${requestInfo.user.nick_info[0].replace(/[`|"|*]/gi, "")}\`**`
