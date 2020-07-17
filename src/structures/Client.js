@@ -1,19 +1,15 @@
-// Импортируем модули сторонних разработчиков
 const { Client, Collection } = require("discord.js");
 const { readdirSync } = require("fs");
 
-// Импортируем загрузчики
 const Loaders = require("../loaders/index");
 
-// Экспортируем только созданный класс из обычного Client
 module.exports = class AdvancedClient extends Client {
   constructor(token, devs = [], props) {
-    super(props); // Если укажут дополнительные значения, используем их
-    super.login(token); // Авторизовуемся, используя токен
+    super(props);
+    super.login(token);
 
-    this.commands = new Collection(); // Список команд бота
+    this.commands = new Collection();
     this.developers = devs; // ID разработчиков бота. Используется в командах с ограниченным доступом
-    this.settings = null; // Настройки серверов (префиксы, системы). Устанавливается при подключение к БД
 
     console.log(`[Client] Начинается авторизация клиента`);
   }
@@ -95,16 +91,5 @@ module.exports = class AdvancedClient extends Client {
   // Является ли пользователь разработчиком
   isDev(id) {
     return this.developers.includes(id);
-  }
-
-  // Имеет ли бот определенное право на сервере
-  hasPermission(message, permission) {
-    return message.guild ? message.guild.me.hasPermission(permission, true, false, false) : false;
-  }
-
-  // Установка настроек бота
-  setSettings(settings) {
-    this.settings = settings;
-    return this;
   }
 };

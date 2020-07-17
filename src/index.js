@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const cachegoose = require("cachegoose");
 
 const Client = require("./structures/Client");
-const Guild = require("./api/models/Guild");
 
 const client = new Client(
   process.env.DISCORD_TOKEN,
@@ -27,7 +26,6 @@ mongoose.connect(
   async (err) => {
     if (err) throw err;
     console.log("[Database] База данных Mongo успешно подключена.");
-    client.setSettings(await Guild.find({})); // Устанавливаем настройки серверов для клиента
   }
 );
 
