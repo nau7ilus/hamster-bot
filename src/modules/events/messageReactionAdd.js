@@ -1,4 +1,4 @@
-const Guild = require("../../api/models/Guild"); // Модель сервера
+const Guild = require("../../api/models/Guild");
 const { onRunError } = require("../../utils");
 
 module.exports = async (client, reaction, reactedUser) => {
@@ -8,30 +8,19 @@ module.exports = async (client, reaction, reactedUser) => {
   // Получаем сообщение, пользователей и эмодзи
   const { message } = reaction;
 
-  // Проверяем, находится ли сервер в базе данных. Если нет, создать его и обновить кэш
-  if (message.guild && client.settings && !client.settings.find((g) => g.id == message.guild.id)) {
-    await Guild.create({ id: message.guild.id });
-    client.settings = await Guild.find({});
-  }
-
-  // Получаем настройки сервера, иначе null
-  const guildSettings = client.settings
-    ? client.settings.find((g) => g.id == message.guild.id)
-    : null;
+  // Проверяем на наличие сервера.
+  // Так как, некоторые команды разрешено использовать в ЛС, необходимо проверить наличие сервера
+  const isGuild = !!message.guild;
+  let guildData = isGuild ? await Guild.findOne({ id: message.guild.id }).cache() : null;
+  if (isGuild && !guildData) guildData = await Guild.create({ id: message.guild.id });
 
   // Проверяем, включена ли система выдачи ролей
-  if (
-    guildSettings &&
-    guildSettings.give_role.is_enabled &&
-    guildSettings.give_role.requests_channel
-  ) {
+  if (guildData && guildData.give_role.is_enabled && guildData.give_role.requests_channel) {
     // Если в канале для запроса роли
-    let requests_channel = message.guild.channels.cache.get(
-      guildSettings.give_role.requests_channel
-    );
+    let requests_channel = message.guild.channels.cache.get(guildData.give_role.requests_channel);
     if (requests_channel && message.channel.id === requests_channel.id) {
       require("../giveRoles/reactionController")
-        .run({ client, reaction, reactedUser, guildSettings })
+        .run({ client, reaction, reactedUser, guildData })
         .catch((warning) => onRunError({ client, warning, message }));
     }
   }
