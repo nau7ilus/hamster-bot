@@ -8,58 +8,52 @@ exports.run = async ({ message, guildData }) => {
 
   // TODO: Добавить для премиум серверов (Аризона) поиск пользователя на сайте проекта
 
-  // Проверяем, разрешено ли использование системы в данном канале
-  const checkChannel =
-    guildData.give_role.require.channels.length > 0 ||
-    guildData.give_role.banned.channels.length > 0;
+  const requestSettings = guildData.give_role;
 
-  if (checkChannel) {
-    if (
-      !guildData.give_role.require.channels.includes(message.channel.id) ||
-      guildData.give_role.banned.channels.includes(message.channel.id)
-    ) {
-      // Если используется в запрещенном канале, отправить сообщение
-      return sendErrorMessage({
-        message,
-        member: message.member,
-        guildData,
-        content: `вы не можете запрашивать роли в этом канале`,
-      });
-    }
+  // Проверяем, разрешено ли использование системы в данном канале
+  const checkChannel = () => {
+    const arr = [];
+    if (requestSettings.require.channels.length > 0) arr.push("require");
+    if (requestSettings.banned.channels.length > 0) arr.push("banned");
+    return arr;
+  };
+  if (
+    (checkChannel().includes("require") &&
+      !requestSettings.require.channels.includes(message.channel.id)) ||
+    (checkChannel().includes("banned") &&
+      requestSettings.banned.channels.includes(message.channel.id))
+  ) {
+    return sendErrorMessage({
+      message,
+      member: message.member,
+      guildData,
+      content: `вы не можете запрашивать роли в этом канале`,
+    });
   }
-  const checkRoles =
-    guildData.give_role.require.roles.length > 0 || guildData.give_role.banned.roles.length > 0;
-  console.log("checkRoles", checkRoles);
-  if (checkRoles) {
-    if (
+
+  // Проверяем права пользователя
+  const checkRoles = () => {
+    const arr = [];
+    if (requestSettings.require.roles.length > 0) arr.push("require");
+    if (requestSettings.banned.roles.length > 0) arr.push("banned");
+    return arr;
+  };
+  if (
+    (checkRoles().includes("require") &&
       !message.member.roles.cache.some((role) =>
         guildData.give_role.require.roles.includes(role.id)
-      ) ||
-      message.member.roles.cache.some((role) => guildData.give_role.banned.roles.includes(role.id))
-    ) {
-      // Если используется в запрещенном канале, отправить сообщение
-      return sendErrorMessage({
-        message,
-        member: message.member,
-        guildData,
-        content: `вы не можете запрашивать роли`,
-      });
-    }
+      )) ||
+    (checkRoles().includes("banned") &&
+      message.member.roles.cache.some((role) => guildData.give_role.banned.roles.includes(role.id)))
+  ) {
+    return sendErrorMessage({
+      message,
+      member: message.member,
+      guildData,
+      content: `вы не можете запрашивать роли`,
+    });
   }
 
-  // Проверяем, разрешено ли пользователю использовать систему
-  //   if (
-  //     guildData.give_role.require.roles &&
-  //     guildData.give_role.require.roles.length !== 0 &&
-  //     message.member.roles.cache.some((role) =>
-  //       guildData.give_role.require.roles.includes(role.id)
-  //     ) &&
-  //     guildData.give_role.banned.roles &&
-  //     guildData.give_role.banned.roles.length !== 0 &&
-  //     message.member.roles.cache.some(
-  //       (role) => !guildData.give_role.banned.roles.includes(role.id)
-  //     )
-  //   ) {
   // Проверяем права бота на отправление сообщений, добавление реакций
   const missingPerms = checkPermissions(
     message.channel,
@@ -74,7 +68,7 @@ exports.run = async ({ message, guildData }) => {
     });
 
   // Проверяем форму ника. Создаем регулярное выражение по тому, что указано в БД
-  const nickRegex = new RegExp(guildData.give_role.name_regexp, "i");
+  const nickRegex = new RegExp(requestSettings.name_regexp, "i");
 
   // Если ник не подходит по форме, отправить ошибку
   if (!nickRegex || !nickRegex.test(message.member.displayName)) {
@@ -109,8 +103,8 @@ exports.run = async ({ message, guildData }) => {
   }
 
   // Ищем тег пользователя в базе данных
-  const tagInfo = guildData.give_role.tags
-    ? guildData.give_role.tags.find((tag) => tag.names.includes(nickInfo[1]))
+  const tagInfo = requestSettings.tags
+    ? requestSettings.tags.find((tag) => tag.names.includes(nickInfo[1]))
     : null;
 
   // Если указанного тега нет, отправить сообщение об ошибке
@@ -119,7 +113,7 @@ exports.run = async ({ message, guildData }) => {
       message,
       member: message.member,
       guildData,
-      content: `тег '${nickInfo[1].replace(/`/, "")}' не найден в настройках сервера`,
+      content: `тег '${nickInfo[1].replace(/`/g, "")}' не найден в настройках сервера`,
     });
   }
 
@@ -129,7 +123,7 @@ exports.run = async ({ message, guildData }) => {
       member: message.member,
       guildData,
       content: `одна из ролей для выдачи по тегу '${
-				nickInfo[1].replace(/`/,"")}' не найдена на сервере` // prettier-ignore
+				nickInfo[1].replace(/`/g,"")}' не найдена на сервере` // prettier-ignore
     });
   }
 
@@ -145,7 +139,7 @@ exports.run = async ({ message, guildData }) => {
 
   // Поиск канала для отправки запроса
   const requestsChannel =
-    message.guild.channels.cache.get(guildData.give_role.requests_channel) || null;
+    message.guild.channels.cache.get(requestSettings.requests_channel) || null;
 
   // Если канала нет, отправить ошибку об этом
   if (!requestsChannel) {
@@ -182,7 +176,7 @@ exports.run = async ({ message, guildData }) => {
           { name: `**Пользователь**`, value: `**${message.member}**`, inline: true },
           {
             name: `**Никнейм**`,
-            value: `**${nickInfo[0].replace(/[`|"|*]/gi, "")}**`,
+            value: `**${nickInfo[0].replace(/[`|*]/gi, "")}**`,
             inline: true,
           },
           {
@@ -223,7 +217,7 @@ exports.run = async ({ message, guildData }) => {
   // Если все удачно, отправить сообщение
   message.react(`✅`);
   return message.channel.send(
-    guildData.give_role.message_type == "plain_text"
+    requestSettings.message_type == "plain_text"
       ? "**`[✅ | Запрос отправлен] Запрос был успешно отправлен. Ожидайте проверку заявки модератором`**"
       : new MessageEmbed()
           .setColor("#6cf542")
