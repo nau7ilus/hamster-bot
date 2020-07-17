@@ -1,43 +1,25 @@
-// Файл для создания модели гильдии. Используется в базе данных.
-// Настройки бота для определенного Discord-сервера
-
-// Импортируем класс Sсhema и функцию model из модуля mongoose
-// для создания модели гильдии
 const { Schema, model } = require("mongoose");
 
-// Оглашаем новую шему с информацией о гильдии
 const GuildSchema = new Schema(
   {
-    // ID гильдии
     id: {
       type: String,
-      unique: true, // Должно быть уникально
+      unique: true,
     },
 
-    // Является ли гильдия премиум-сервером?
-    // На время тестирования используется только на серверах Arizona Games
-    // Планируется подключить Patreon для пожертвований
     is_premium: {
-      type: Boolean, // Хранит только ДА/НЕТ
-      default: false, // По умолчанию НЕТ
+      type: Boolean,
+      default: false,
     },
-    // Общие настройки бота
+
     common: {
-      // Префикс используется в начале сообщений для обозначения команд бота
       prefix: {
         type: String,
-        maxlength: 20, // Максимальное количество
-        default: "/", // По умолчанию
-      },
-
-      // Цвет системных сообщений
-      color: {
-        type: String,
-        default: "#ecc333",
+        maxlength: 20,
+        default: "/",
       },
     },
 
-    // Система выдачи ролей
     give_role: {
       // Включена ли функция?
       is_enabled: { type: Boolean, default: false },
@@ -84,5 +66,4 @@ const GuildSchema = new Schema(
   }
 );
 
-// Эксопортируем модель гильдии
 module.exports = model("guilds", GuildSchema);
