@@ -1,7 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 const {
   sendErrorMessage,
-  checkClientPermissions,
+  checkPermissions,
   missingPermsError,
   localizePerm,
 } = require("../../../utils");
@@ -11,7 +11,7 @@ exports.run = async ({
   requestInfo,
   reaction,
   requestAuthor,
-  guildSettings,
+  guildData,
   reactedMember,
 }) => {
   const { message } = reaction;
@@ -23,7 +23,7 @@ exports.run = async ({
       message,
       content: "бот не может найти данные о запросе",
       member: reactedMember,
-      guildSettings,
+      guildData,
       react: false,
     });
     // Удалим реакцию пользователя
@@ -40,7 +40,7 @@ exports.run = async ({
       message,
       content: "у вас недостаточно прав для одобрения данного запроса",
       member: reactedMember,
-      guildSettings,
+      guildData,
       react: false,
     });
     // Удалим реакцию пользователя
@@ -56,7 +56,7 @@ exports.run = async ({
       message,
       content: "одна из ролей для выдачи не найдена на сервере",
       member: reactedMember,
-      guildSettings,
+      guildData,
       react: false,
     });
     return reaction.users.remove(reactedMember);
@@ -71,7 +71,7 @@ exports.run = async ({
         localizePerm("MANAGE_ROLES") +
         "' и роль, которую необходимо выдать находится ниже роли бота",
       member: reactedMember,
-      guildSettings,
+      guildData,
       react: false,
     });
     return reaction.users.remove(reactedMember);
@@ -83,22 +83,22 @@ exports.run = async ({
       message,
       content: "канал для отправки сообщения не найден на сервере",
       member: reactedMember,
-      guildSettings,
+      guildData,
       react: false,
     });
   }
 
   // Проверка прав в канале для отправки сообщения
-  const missingPerms = checkClientPermissions(channel, [
-    "SEND_MESSAGES",
-    "EMBED_LINKS",
-    "VIEW_CHANNEL",
-  ]);
+  const missingPerms = checkPermissions(
+    channel,
+    ["SEND_MESSAGES", "EMBED_LINKS", "VIEW_CHANNEL"],
+    message.guild.me
+  );
   if (missingPerms.length > 0)
     return missingPermsError({ message, missingPerms, channel, react: false });
 
   // Проверяем роли, которые необходимо снять
-  const rolesToRemove = getRolesToRemove(requestAuthor, guildSettings, tagInfo.give_roles).map(
+  const rolesToRemove = getRolesToRemove(requestAuthor, guildData, tagInfo.give_roles).map(
     (role) => message.guild.roles.cache.get(role) || null
   );
   if (rolesToRemove.length > 0) {
@@ -113,7 +113,7 @@ exports.run = async ({
           localizePerm("MANAGE_ROLES") +
           "' и позиция данных ролей находится ниже роли бота",
         member: reactedMember,
-        guildSettings,
+        guildData,
         react: false,
       });
       return reaction.users.remove(reactedMember);
@@ -126,7 +126,7 @@ exports.run = async ({
           message,
           content: "произошла ошибка при попытке снятия роли '" + role.name + "'",
           member: reactedMember,
-          guildSettings,
+          guildData,
           react: false,
         })
       )
@@ -141,7 +141,7 @@ exports.run = async ({
     .then(() => {
       // Одобряем запрос
       message.channel.send(
-        guildSettings.give_role.message_type == "plain_text"
+        guildData.give_role.message_type == "plain_text"
           ? // prettier-ignore
             `**\`[✅ | Одобрение] \`${reactedMember}\` одобрил запрос пользователя \`${requestAuthor
 				}\` с ником ${requestInfo.user.nick_info[0].replace(/[`|"|*]/gi, "")}\`**`
@@ -154,7 +154,7 @@ exports.run = async ({
 						.replace(/[`|"|*]/gi, "")}"\`**` // prettier-ignore
               )
       );
-      channel.send(guildSettings.give_role.message_type == "plain_text" ?
+      channel.send(guildData.give_role.message_type == "plain_text" ?
 				`**\`[✅ | Одобрение]\` ${requestAuthor},\` модератор \`${ 
 					reactedMember} \`одобрил ваш запрос на получение роли "${requestInfo.role_to_give.map(
 						role => message.guild.roles.cache.get(role) ? message.guild.roles.cache.get(role).name : "Не найдено").join(", ")
@@ -174,14 +174,14 @@ exports.run = async ({
         message,
         content: "произошла ошибка при попытке выдачи ролей",
         member: reactedMember,
-        guildSettings,
+        guildData,
         react: false,
       })
     );
 };
 
-function getRolesToRemove(member, guildSettings, rolesToSkip) {
-  return guildSettings.give_role.tags
+function getRolesToRemove(member, guildData, rolesToSkip) {
+  return guildData.give_role.tags
     .flatMap((tag) => tag.give_roles)
     .filter(
       (role) =>

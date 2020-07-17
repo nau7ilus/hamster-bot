@@ -1,12 +1,12 @@
 const { MessageEmbed } = require("discord.js");
-const { sendErrorMessage, checkClientPermissions, missingPermsError } = require("../../../utils");
+const { sendErrorMessage, checkPermissions, missingPermsError } = require("../../../utils");
 
 exports.run = async ({
   tagInfo,
   requestInfo,
   reaction,
   requestAuthor,
-  guildSettings,
+  guildData,
   reactedMember,
 }) => {
   // Получим сообщение и эмодзи из реакции
@@ -19,7 +19,7 @@ exports.run = async ({
       message,
       content: "бот не может найти данные о запросе",
       member: reactedMember,
-      guildSettings,
+      guildData,
       react: false,
     });
     // Удалим реакцию пользователя
@@ -36,7 +36,7 @@ exports.run = async ({
       message,
       content: "у вас нет прав на отклонение данного запросом",
       member: reactedMember,
-      guildSettings,
+      guildData,
       react: false,
     });
     // Удалим реакцию пользователя
@@ -51,7 +51,7 @@ exports.run = async ({
       message,
       content: "ошибка при поиске канала отправки",
       member: reactedMember,
-      guildSettings,
+      guildData,
       react: false,
     });
     // Удалим реакцию пользователя
@@ -59,17 +59,17 @@ exports.run = async ({
   }
 
   // Проверяем права бота в канале для отправки сообщения
-  const missingPerms = checkClientPermissions(channel, [
-    "SEND_MESSAGES",
-    "EMBED_LINKS",
-    "VIEW_CHANNEL",
-  ]);
+  const missingPerms = checkPermissions(
+    channel,
+    ["SEND_MESSAGES", "EMBED_LINKS", "VIEW_CHANNEL"],
+    message.guild.me
+  );
   if (missingPerms.length > 0)
     return missingPermsError({ message, missingPerms, channel, react: false });
 
   // Отклоняем запрос
   message.channel.send(
-    guildSettings.give_role.message_type == "plain_text"
+    guildData.give_role.message_type == "plain_text"
       ? // prettier-ignore
         `**\`[❌ | Отклонение] \`${reactedMember}\` отклонил запрос пользователя \`${requestAuthor
 			}\` с ником ${requestInfo.user.nick_info[0].replace(/[`|"|*]/gi, "")}\`**`
@@ -82,7 +82,7 @@ exports.run = async ({
 					.replace(/[`|"|*]/gi, "")}"\`**` // prettier-ignore
           )
   );
-  channel.send(guildSettings.give_role.message_type == "plain_text" ?
+  channel.send(guildData.give_role.message_type == "plain_text" ?
 		// prettier-ignore
 			`**\`[❌ | Отклонение]\` ${requestAuthor},\` модератор \`${ // prettier-ignore
 				reactedMember} \`отклонил ваш запрос на получение роли "${requestInfo.role_to_give.map(

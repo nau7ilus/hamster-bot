@@ -18,16 +18,16 @@ exports.random = (array) => {
  * @param {Message} params.message
  * @param {string} params.content Текст ошибки
  * @param {GuildMember} params.member Пользователь
- * @param {guildSettings} params.guildSettings Настройки сервера в базе данных бота
+ * @param {guildData} params.guildData Настройки сервера в базе данных бота
  * @param {string} [params.emoji] Эмодзи
  * @param {boolean} [params.react=true] Ставить ли реакцию на сообщение
- * @param {(string|number)} [param.color=guildSettings.common.color] Цвет панели сообщения
+ * @param {(string|number)} [param.color=guildData.common.color] Цвет панели сообщения
  */
 exports.sendErrorMessage = ({
   message,
   content,
   member,
-  guildSettings,
+  guildData,
   emoji,
   react = true,
   color,
@@ -36,10 +36,10 @@ exports.sendErrorMessage = ({
   if (react) message.react(emoji);
   message.channel
     .send(
-      guildSettings.give_role.message_type == "plain_text"
+      guildData.give_role.message_type == "plain_text"
         ? `**\`[${emoji} | Ошибка] \`${member}\`, ${content}\`**`
         : new MessageEmbed()
-            .setColor(color || guildSettings.common.color)
+            .setColor(color || "#ff3333")
             .setTitle(`**${emoji} | Произошла ошибка**`)
             .setDescription(`**${member}, ${content}**`)
             .setFooter("HamsterBot | Ошибка", message.guild.me.user.displayAvatarURL())
@@ -101,20 +101,19 @@ exports.onRunError = ({ client, warning, message }) => {
  * Проверить права бота в определенном канале
  * @param {TextChannel} channel Канал
  * @param {Array} permissions Список из названий прав, которые необходимо проверить
- * @return {Array} Список названий прав, которых нет у бота
+ * @param {GuildMember} member Пользователь
+ * @return {Array} Список названий прав, которых нет у пользователя
  */
-exports.checkClientPermissions = (channel, permissions) => {
-  // Список недостающих прав
-  const clientMissingPermissions = [];
+exports.checkPermissions = (channel, permissions, member) => {
+  const missingPermissions = [];
 
   // Если у бота нет прав администратора на сервере, проверяем права для бота
-  if (!channel.guild.me.hasPermission("ADMINISTRATOR")) {
+  if (!member.hasPermission("ADMINISTRATOR")) {
     permissions.forEach((permission) => {
-      if (!channel.permissionsFor(channel.guild.me).has(permission))
-        clientMissingPermissions.push(permission);
+      if (!channel.permissionsFor(member).has(permission)) missingPermissions.push(permission);
     });
   }
-  return clientMissingPermissions;
+  return missingPermissions;
 };
 
 /**
@@ -168,7 +167,14 @@ exports.localizePerm = (perm) => {
  * @param {string} [params.emoji="🔇"] Эмодзи в названии собщения
  * @param {boolean} [params.react=true] Ставить ли реакцию на сообщение
  */
-exports.missingPermsError = ({ message, channel, missingPerms, emoji = "🔇", react = true }) => {
+exports.missingPermsError = ({
+  message,
+  channel,
+  missingPerms,
+  emoji = "🔇",
+  react = true,
+  isClient = true,
+}) => {
   const canIgnore = message.channel.id !== channel.id;
   if (!missingPerms.includes("ADD_REACTIONS") || (canIgnore && !react)) message.react(emoji);
   if (!missingPerms.includes("SEND_MESSAGES") || canIgnore)
@@ -179,11 +185,14 @@ exports.missingPermsError = ({ message, channel, missingPerms, emoji = "🔇", r
               .setColor("#ff3333")
               .setTitle(`**${emoji} | Произошла ошибка**`)
               .setDescription(
-                "**У бота нехватает прав `" +
-                  missingPerms.map((perm) => exports.localizePerm(perm)).join(", ") +
-                  "` в канале <#" +
-                  channel.id +
-                  ">**"
+                "**У " + isClient
+                  ? "бота"
+                  : "вас" +
+                      " нехватает прав `" +
+                      missingPerms.map((perm) => exports.localizePerm(perm)).join(", ") +
+                      "` в канале <#" +
+                      channel.id +
+                      ">**"
               )
           : "**`[" +
               emoji +

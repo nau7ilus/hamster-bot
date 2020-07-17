@@ -1,8 +1,8 @@
 const { MessageEmbed } = require("discord.js"); // Для отправки сообщений типа ембед
-const { checkClientPermissions, missingPermsError, sendErrorMessage } = require("../../utils");
+const { checkPermissions, missingPermsError, sendErrorMessage } = require("../../utils");
 const RoleRequests = require("../../api/models/RoleRequests"); // Для логирования запросов
 
-exports.run = async ({ message, guildSettings }) => {
+exports.run = async ({ message, guildData }) => {
   // TODO: Добавить в БД возможность удалять сообщения автора,
   // бота по интервалу или вообще не отвечать
 
@@ -10,41 +10,38 @@ exports.run = async ({ message, guildSettings }) => {
 
   // Проверяем, разрешено ли использование системы в данном канале
   const checkChannel =
-    guildSettings.give_role.require.channels.length > 0 ||
-    guildSettings.give_role.banned.channels.length > 0;
-  console.log("checkChannel", checkChannel);
+    guildData.give_role.require.channels.length > 0 ||
+    guildData.give_role.banned.channels.length > 0;
+
   if (checkChannel) {
     if (
-      !guildSettings.give_role.require.channels.includes(message.channel.id) ||
-      guildSettings.give_role.banned.channels.includes(message.channel.id)
+      !guildData.give_role.require.channels.includes(message.channel.id) ||
+      guildData.give_role.banned.channels.includes(message.channel.id)
     ) {
       // Если используется в запрещенном канале, отправить сообщение
       return sendErrorMessage({
         message,
         member: message.member,
-        guildSettings,
+        guildData,
         content: `вы не можете запрашивать роли в этом канале`,
       });
     }
   }
   const checkRoles =
-    guildSettings.give_role.require.roles.length > 0 ||
-    guildSettings.give_role.banned.roles.length > 0;
+    guildData.give_role.require.roles.length > 0 || guildData.give_role.banned.roles.length > 0;
   console.log("checkRoles", checkRoles);
   if (checkRoles) {
     if (
       !message.member.roles.cache.some((role) =>
-        guildSettings.give_role.require.roles.includes(role.id)
+        guildData.give_role.require.roles.includes(role.id)
       ) ||
-      message.member.roles.cache.some((role) =>
-        guildSettings.give_role.banned.roles.includes(role.id)
-      )
+      message.member.roles.cache.some((role) => guildData.give_role.banned.roles.includes(role.id))
     ) {
       // Если используется в запрещенном канале, отправить сообщение
       return sendErrorMessage({
         message,
         member: message.member,
-        guildSettings,
+        guildData,
         content: `вы не можете запрашивать роли`,
       });
     }
@@ -52,23 +49,23 @@ exports.run = async ({ message, guildSettings }) => {
 
   // Проверяем, разрешено ли пользователю использовать систему
   //   if (
-  //     guildSettings.give_role.require.roles &&
-  //     guildSettings.give_role.require.roles.length !== 0 &&
+  //     guildData.give_role.require.roles &&
+  //     guildData.give_role.require.roles.length !== 0 &&
   //     message.member.roles.cache.some((role) =>
-  //       guildSettings.give_role.require.roles.includes(role.id)
+  //       guildData.give_role.require.roles.includes(role.id)
   //     ) &&
-  //     guildSettings.give_role.banned.roles &&
-  //     guildSettings.give_role.banned.roles.length !== 0 &&
+  //     guildData.give_role.banned.roles &&
+  //     guildData.give_role.banned.roles.length !== 0 &&
   //     message.member.roles.cache.some(
-  //       (role) => !guildSettings.give_role.banned.roles.includes(role.id)
+  //       (role) => !guildData.give_role.banned.roles.includes(role.id)
   //     )
   //   ) {
   // Проверяем права бота на отправление сообщений, добавление реакций
-  const missingPerms = checkClientPermissions(message.channel, [
-    "SEND_MESSAGES",
-    "ADD_REACTIONS",
-    "EMBED_LINKS",
-  ]);
+  const missingPerms = checkPermissions(
+    message.channel,
+    ["SEND_MESSAGES", "ADD_REACTIONS", "EMBED_LINKS"],
+    message.guild.me
+  );
   if (missingPerms.length > 0)
     return missingPermsError({
       message,
@@ -77,14 +74,14 @@ exports.run = async ({ message, guildSettings }) => {
     });
 
   // Проверяем форму ника. Создаем регулярное выражение по тому, что указано в БД
-  const nickRegex = new RegExp(guildSettings.give_role.name_regexp, "i");
+  const nickRegex = new RegExp(guildData.give_role.name_regexp, "i");
 
   // Если ник не подходит по форме, отправить ошибку
   if (!nickRegex || !nickRegex.test(message.member.displayName)) {
     return sendErrorMessage({
       message,
       member: message.member,
-      guildSettings,
+      guildData,
       content: "ваш ник не соответствует форме",
     });
   }
@@ -98,14 +95,13 @@ exports.run = async ({ message, guildSettings }) => {
     await RoleRequests.findOne({
       "user.id": message.member.id,
       guild_id: message.guild.id,
-      status: "poll",
     })
   ) {
     message.react(`⏱️`);
     return sendErrorMessage({
       message,
       member: message.member,
-      guildSettings,
+      guildData,
       emoji: "⏱️",
       color: "#24f0ff",
       content: "вы уже отправляли запрос. Ожидайте рассмотрения заявки модераторами",
@@ -113,8 +109,8 @@ exports.run = async ({ message, guildSettings }) => {
   }
 
   // Ищем тег пользователя в базе данных
-  const tagInfo = guildSettings.give_role.tags
-    ? guildSettings.give_role.tags.find((tag) => tag.names.includes(nickInfo[1]))
+  const tagInfo = guildData.give_role.tags
+    ? guildData.give_role.tags.find((tag) => tag.names.includes(nickInfo[1]))
     : null;
 
   // Если указанного тега нет, отправить сообщение об ошибке
@@ -122,7 +118,7 @@ exports.run = async ({ message, guildSettings }) => {
     return sendErrorMessage({
       message,
       member: message.member,
-      guildSettings,
+      guildData,
       content: `тег '${nickInfo[1].replace(/`/, "")}' не найден в настройках сервера`,
     });
   }
@@ -131,8 +127,8 @@ exports.run = async ({ message, guildSettings }) => {
     return sendErrorMessage({
       message,
       member: message.member,
-      guildSettings,
-      content: `одна из ролей для выдачи тега '${
+      guildData,
+      content: `одна из ролей для выдачи по тегу '${
 				nickInfo[1].replace(/`/,"")}' не найдена на сервере` // prettier-ignore
     });
   }
@@ -142,33 +138,31 @@ exports.run = async ({ message, guildSettings }) => {
     return sendErrorMessage({
       message,
       member: message.member,
-      guildSettings,
+      guildData,
       content: "у вас уже есть роли, которые предусматривает данный тег",
     });
   }
 
   // Поиск канала для отправки запроса
   const requestsChannel =
-    message.guild.channels.cache.get(guildSettings.give_role.requests_channel) || null;
+    message.guild.channels.cache.get(guildData.give_role.requests_channel) || null;
 
   // Если канала нет, отправить ошибку об этом
   if (!requestsChannel) {
     return sendErrorMessage({
       message,
       member: message.member,
-      guildSettings,
+      guildData,
       content: `канал для отправки запроса не найден на сервере`,
     });
   }
 
   // Проверяем права бота в канале для запроса ролей
-  const requestChannelPerms = checkClientPermissions(requestsChannel, [
-    "SEND_MESSAGES",
-    "ADD_REACTIONS",
-    "EMBED_LINKS",
-    "MANAGE_MESSAGES",
-    "VIEW_CHANNEL",
-  ]);
+  const requestChannelPerms = checkPermissions(
+    requestsChannel,
+    ["SEND_MESSAGES", "ADD_REACTIONS", "EMBED_LINKS", "MANAGE_MESSAGES", "VIEW_CHANNEL"],
+    message.guild.me
+  );
   if (requestChannelPerms.length > 0)
     return missingPermsError({
       message,
@@ -180,7 +174,7 @@ exports.run = async ({ message, guildSettings }) => {
   requestsChannel
     .send(
       new MessageEmbed()
-        .setColor(guildSettings.common.color)
+        .setColor(guildData.common.color)
         .setTitle(`**📨 | Запрос роли**`)
 
         // TODO: Обдумать стиль смайликов. Если можно, сделать кастомные на сервере бота
@@ -229,7 +223,7 @@ exports.run = async ({ message, guildSettings }) => {
   // Если все удачно, отправить сообщение
   message.react(`✅`);
   return message.channel.send(
-    guildSettings.give_role.message_type == "plain_text"
+    guildData.give_role.message_type == "plain_text"
       ? "**`[✅ | Запрос отправлен] Запрос был успешно отправлен. Ожидайте проверку заявки модератором`**"
       : new MessageEmbed()
           .setColor("#6cf542")
