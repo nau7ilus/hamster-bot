@@ -29,5 +29,4 @@ mongoose.connect(
   }
 );
 
-// Экспортируем клиента
 module.exports = client;
