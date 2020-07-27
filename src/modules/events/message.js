@@ -57,7 +57,6 @@ module.exports = async (client, message) => {
         message,
         content: "у вас нет прав на использование этой команды",
         member: message.member,
-        guildData,
       });
       return console.log(
         `[Message] ${message.author.tag} попытался использовать команду для разработчиков ${
@@ -80,7 +79,6 @@ module.exports = async (client, message) => {
           message,
           content: "эта команда доступна только на сервере",
           member: message.member,
-          guildData,
         });
         return console.log(
           `[Message] ${message.author.tag} использовал команду ${cmd.name}. Ошибка: команда доступна только на сервере.`
@@ -117,7 +115,6 @@ module.exports = async (client, message) => {
           message,
           content: "эта команда доступна только в NSFW каналах",
           member: message.member,
-          guildData,
           emoji: "🔞",
         });
       }

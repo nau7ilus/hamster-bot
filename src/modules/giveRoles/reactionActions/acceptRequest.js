@@ -23,8 +23,8 @@ exports.run = async ({
       message,
       content: "бот не может найти данные о запросе",
       member: reactedMember,
-      guildData,
       react: false,
+      messageType: guildData.give_role.message_type,
     });
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);
@@ -40,8 +40,8 @@ exports.run = async ({
       message,
       content: "у вас недостаточно прав для одобрения данного запроса",
       member: reactedMember,
-      guildData,
       react: false,
+      messageType: guildData.give_role.message_type,
     });
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);
@@ -56,8 +56,8 @@ exports.run = async ({
       message,
       content: "одна из ролей для выдачи не найдена на сервере",
       member: reactedMember,
-      guildData,
       react: false,
+      messageType: guildData.give_role.message_type,
     });
     return reaction.users.remove(reactedMember);
   }
@@ -71,8 +71,8 @@ exports.run = async ({
         localizePerm("MANAGE_ROLES") +
         "' и роль, которую необходимо выдать находится ниже роли бота",
       member: reactedMember,
-      guildData,
       react: false,
+      messageType: guildData.give_role.message_type,
     });
     return reaction.users.remove(reactedMember);
   }
@@ -83,8 +83,8 @@ exports.run = async ({
       message,
       content: "канал для отправки сообщения не найден на сервере",
       member: reactedMember,
-      guildData,
       react: false,
+      messageType: guildData.give_role.message_type,
     });
   }
 
@@ -113,8 +113,8 @@ exports.run = async ({
           localizePerm("MANAGE_ROLES") +
           "' и позиция данных ролей находится ниже роли бота",
         member: reactedMember,
-        guildData,
         react: false,
+        messageType: guildData.give_role.message_type,
       });
       return reaction.users.remove(reactedMember);
     }
@@ -126,8 +126,8 @@ exports.run = async ({
           message,
           content: "произошла ошибка при попытке снятия роли '" + role.name + "'",
           member: reactedMember,
-          guildData,
           react: false,
+          messageType: guildData.give_role.message_type,
         })
       )
     );
@@ -174,8 +174,8 @@ exports.run = async ({
         message,
         content: "произошла ошибка при попытке выдачи ролей",
         member: reactedMember,
-        guildData,
         react: false,
+        messageType: guildData.give_role.message_type,
       })
     );
 };

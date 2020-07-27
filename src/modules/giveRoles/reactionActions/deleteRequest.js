@@ -38,8 +38,8 @@ exports.run = async ({
       message,
       content: "у вас нет прав на удаление данного запроса",
       member: reactedMember,
-      guildData,
       react: false,
+      messageType: guildData.give_role.message_type,
     });
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);

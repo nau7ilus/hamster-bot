@@ -1,8 +1,6 @@
 const { MessageEmbed } = require("discord.js");
 const { DateTime } = require("luxon");
 
-// TODO: Перенести получение команды с ./src/utils/getThing.js сюда и тот файл удалить
-
 /**
  * Получаем случайное значение из массива
  * @param {Array} array
@@ -27,16 +25,16 @@ exports.sendErrorMessage = ({
   message,
   content,
   member,
-  guildData,
   emoji,
   react = true,
   color,
+  messageType = "embed",
 }) => {
   if (!emoji) emoji = exports.random(["😥", "😔", "🤔", "⚠️", "⛔", "🚫"]);
   if (react) message.react(emoji);
   message.channel
     .send(
-      guildData.give_role.message_type == "plain_text"
+      messageType == "plain_text"
         ? `**\`[${emoji} | Ошибка] \`${member}\`, ${content}\`**`
         : new MessageEmbed()
             .setColor(color || "#ff3333")

@@ -26,8 +26,8 @@ exports.run = async ({ message, guildData }) => {
     return sendErrorMessage({
       message,
       member: message.member,
-      guildData,
       content: `вы не можете запрашивать роли в этом канале`,
+      messageType: guildData.give_role.message_type,
     });
   }
 
@@ -49,8 +49,8 @@ exports.run = async ({ message, guildData }) => {
     return sendErrorMessage({
       message,
       member: message.member,
-      guildData,
       content: `вы не можете запрашивать роли`,
+      messageType: guildData.give_role.message_type,
     });
   }
 
@@ -75,8 +75,8 @@ exports.run = async ({ message, guildData }) => {
     return sendErrorMessage({
       message,
       member: message.member,
-      guildData,
       content: "ваш ник не соответствует форме",
+      messageType: guildData.give_role.message_type,
     });
   }
 
@@ -95,10 +95,10 @@ exports.run = async ({ message, guildData }) => {
     return sendErrorMessage({
       message,
       member: message.member,
-      guildData,
       emoji: "⏱️",
       color: "#24f0ff",
       content: "вы уже отправляли запрос. Ожидайте рассмотрения заявки модераторами",
+      messageType: guildData.give_role.message_type,
     });
   }
 
@@ -112,8 +112,8 @@ exports.run = async ({ message, guildData }) => {
     return sendErrorMessage({
       message,
       member: message.member,
-      guildData,
       content: `тег '${nickInfo[1].replace(/`/g, "")}' не найден в настройках сервера`,
+      messageType: guildData.give_role.message_type,
     });
   }
 
@@ -121,7 +121,7 @@ exports.run = async ({ message, guildData }) => {
     return sendErrorMessage({
       message,
       member: message.member,
-      guildData,
+      messageType: guildData.give_role.message_type,
       content: `одна из ролей для выдачи по тегу '${
 				nickInfo[1].replace(/`/g,"")}' не найдена на сервере` // prettier-ignore
     });
@@ -132,8 +132,8 @@ exports.run = async ({ message, guildData }) => {
     return sendErrorMessage({
       message,
       member: message.member,
-      guildData,
       content: "у вас уже есть роли, которые предусматривает данный тег",
+      messageType: guildData.give_role.message_type,
     });
   }
 
@@ -146,8 +146,8 @@ exports.run = async ({ message, guildData }) => {
     return sendErrorMessage({
       message,
       member: message.member,
-      guildData,
       content: `канал для отправки запроса не найден на сервере`,
+      messageType: guildData.give_role.message_type,
     });
   }
 

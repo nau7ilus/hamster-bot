@@ -19,8 +19,8 @@ exports.run = async ({
       message,
       content: "бот не может найти данные о запросе",
       member: reactedMember,
-      guildData,
       react: false,
+      messageType: guildData.give_role.message_type,
     });
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);
@@ -36,8 +36,8 @@ exports.run = async ({
       message,
       content: "у вас нет прав на отклонение данного запросом",
       member: reactedMember,
-      guildData,
       react: false,
+      messageType: guildData.give_role.message_type,
     });
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);
@@ -51,8 +51,8 @@ exports.run = async ({
       message,
       content: "ошибка при поиске канала отправки",
       member: reactedMember,
-      guildData,
       react: false,
+      messageType: guildData.give_role.message_type,
     });
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);
