@@ -1,6 +1,4 @@
 node_modules
-.vscode
-start.cmd
 .github
 .DS_Store
 .env

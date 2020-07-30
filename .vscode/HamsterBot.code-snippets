@@ -1,0 +1,71 @@
+{
+  "Command": {
+    "scope": "javascript",
+    "prefix": "cmd",
+    "body": [
+      "const Command = require(\"lib/structures/Command\");",
+      "",
+      "module.exports = new Command(",
+      "\t{",
+      "\t\tname: \"\",",
+      "\t\tdescription: \"\",",
+      "\t\taliases: [],",
+      "\t\tusage: \"\",",
+      "\t\tdevOnly: true,",
+      "\t\tclientPermissions: [],",
+      "\t\tuserPermissions: [],",
+      "\t\tguildOnly: true,",
+      "\t\tnsfw: false,",
+      "\t},",
+      "\t\tasync (client, message, args, guildData) => {",
+      "",
+      "\t}",
+      ");"
+    ],
+    "description": "Шаблон для новой команды"
+  },
+  "Model": {
+    "scope": "javascript",
+    "prefix": "model",
+    "body": [
+      "const { Schema, model } = require(\"mongoose\");",
+      "",
+      "const TestSchema = new Schema(",
+      "\t{",
+      "\t\t",
+      "\t},",
+      "\t{",
+      "\t\tversionKey: false,",
+      "\t}",
+      ");",
+      "",
+      "module.exports = model(\"\", TestSchema);"
+    ],
+    "description": "Шаблон для новой модели"
+  },
+  "Route": {
+    "scope": "javascript",
+    "prefix": "route",
+    "body": [
+      "const { Router } = require(\"express\");",
+      "const Route = require(\"lib/structures/Route\");",
+      "",
+      "module.exports = class WebRoute extends Route {",
+      "\tconstructor(client) {",
+      "\t\tsuper({ name: \"user\", parentRoute: \"\", subRoutes: [] }, client);",
+      "\t}",
+      "",
+      "\tregister(app) {",
+      "\t\tconst router = Router();",
+      "",
+      "\t\trouter.get(\"/\", (req, res) => {",
+      "\t\t\t// сюда код",
+      "\t\t});",
+      "",
+      "\t\tapp.use(this.path, router);",
+      "\t}",
+      "};"
+    ],
+    "description": "Шаблон для новой модели"
+  }
+}
