@@ -30,9 +30,4 @@ mongoose.connect(
   }
 );
 
-const Guild = require("lib/models/Guild");
-Guild.findOneAndUpdate({ id: "625036675059548220" }, { "common.language": "en-US" }).catch(
-  console.log
-);
-
 module.exports = client;
