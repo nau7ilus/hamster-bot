@@ -4,7 +4,6 @@ const cachegoose = require("cachegoose");
 const Client = require("lib/structures/Client");
 
 const client = new Client({
-  token: process.env.DISCORD_TOKEN,
   devs: [
     "422109629112254464", // Филипп
     "336207279412215809", // Артем
@@ -13,6 +12,7 @@ const client = new Client({
   ],
 });
 
+client.login(process.env.DISCORD_TOKEN);
 client.loadCommands().loadEvents().initializeHTTPServer();
 
 cachegoose(mongoose);
@@ -22,11 +22,17 @@ mongoose.connect(
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
+    useFindAndModify: false,
   },
   async (err) => {
     if (err) throw err;
     console.log("[Database] База данных Mongo успешно подключена.");
   }
+);
+
+const Guild = require("lib/models/Guild");
+Guild.findOneAndUpdate({ id: "625036675059548220" }, { "common.language": "en-US" }).catch(
+  console.log
 );
 
 module.exports = client;

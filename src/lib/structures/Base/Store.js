@@ -1,15 +1,16 @@
 const { Collection } = require("discord.js");
-const { join, extname, relative, sep } = require("path");
+const { join } = require("path");
+const { readSync } = require("readdir");
+
 const { isClass } = require("lib/utils/Utils");
-const fs = require("fs-nextra");
 
 class Store extends Collection {
-  constructor(client, name, holds) {
+  constructor(client, names, holds) {
     super();
     this.client = client;
-    this.name = name;
+    this.names = names; // [eng, rus]
     this.holds = holds;
-    this.pieceDirectories = new Set();
+    this.directories = new Set();
   }
 
   set(piece) {
@@ -30,23 +31,21 @@ class Store extends Collection {
 
   loadAll() {
     this.clear();
-    this.pieceDirectories.forEach(async (directory) => await Store.walk(this, directory));
+    this.directories.forEach(async (directory) => await Store.walk(this, directory));
     return this.size;
   }
 
   load(directory, file) {
-    const location = join(directory, ...file);
-    let piece = null;
+    const fileLocation = join(directory, file);
+    let storedPiece = null;
     try {
-      const Piece = ((req) => req.default || req)(require(location));
-      if (!isClass(Piece)) throw new TypeError("Файл не содержит класса");
-      piece = this.set(new Piece(this, file, directory));
-    } catch (error) {
-      console.log(error);
+      const Piece = require(fileLocation);
+      if (!isClass(Piece)) throw new TypeError(`Файл ${file} не содержит класса`);
+      storedPiece = this.set(new Piece(this, file, directory));
+    } catch (err) {
+      console.log(err);
     }
-    delete require.cache[location];
-    module.children.pop();
-    return piece;
+    return storedPiece;
   }
 
   toString() {
@@ -59,19 +58,13 @@ class Store extends Collection {
   }
 
   registerPieceDirectory(directory) {
-    this.pieceDirectories.add(join(directory, this.name));
+    this.directories.add(join(directory, this.names[0]));
     return this;
   }
 
   static async walk(store, directory) {
-    const files = await fs
-      .scan(directory, { filter: (stats, path) => stats.isFile() && extname(path) === ".js" })
-      .catch(console.log);
-    if (!files) return true;
-
-    return Promise.all(
-      [...files.keys()].map((file) => store.load(directory, relative(directory, file).split(sep)))
-    );
+    const files = readSync(directory, ["**.js"]);
+    return files ? files.map((file) => store.load(directory, file)) : true;
   }
 
   static get [Symbol.species]() {

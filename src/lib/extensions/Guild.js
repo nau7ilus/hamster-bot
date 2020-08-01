@@ -1,25 +1,33 @@
-const { Structures } = require("discord.js");
+const { Structures, Guild } = require("discord.js");
 const GuildModel = require("../models/Guild");
 
-module.exports = Structures.extend("Guild", (Guild) => {
-  class AdvancedGuild extends Guild {
-    constructor(...args) {
-      super(...args);
-      GuildModel.findOne({ id: this.id }).then((guild) => {
-        this.settings = guild ? guild : null;
-      });
-    }
+class AdvancedGuild extends Guild {
+  constructor(...args) {
+    super(...args);
 
-    get language() {
-      const f = this.client.languages.get(this.settings.common.language) || null;
-      console.log(f);
-      return f;
-    }
-
-    toJSON() {
-      return { ...super.toJSON(), settings: this.settings.toJSON() };
-    }
+    this.settings = null;
+    this.getSettings();
   }
 
-  return AdvancedGuild;
-});
+  getSettings() {
+    GuildModel.findOne({ id: this.id }).then((guild) => {
+      console.log(guild.id);
+      if (!guild) {
+        GuildModel.create({ id: this.id }).then((data) => {
+          this.settings = data;
+        });
+      } else this.settings = guild;
+    });
+  }
+
+  get language() {
+    const languageName = this.settings.common.language || this.client.languages.default.name;
+    return this.client.languages.get(languageName) || null;
+  }
+
+  toJSON() {
+    return { ...super.toJSON(), settings: this.settings.toJSON() };
+  }
+}
+
+module.exports = Structures.extend("Guild", () => AdvancedGuild);

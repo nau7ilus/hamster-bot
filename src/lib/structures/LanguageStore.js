@@ -3,7 +3,7 @@ const Store = require("./Base/Store");
 
 class LanguageStore extends Store {
   constructor(client) {
-    super(client, "languages", Language);
+    super(client, ["languages", "языков"], Language);
   }
 
   get default() {

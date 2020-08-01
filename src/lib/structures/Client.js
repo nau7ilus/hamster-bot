@@ -14,40 +14,39 @@ module.exports = class AdvancedClient extends Client {
     // super.login(options.token);
 
     this.developers = options.devs;
-    this.language = options.language || "ru";
+    this.language = options.language || "ru-RU";
     this.prefix = options.prefix || "/";
     this.commands = new Collection();
 
-    this.pieceStores = new Collection();
+    this.stores = new Collection();
     this.languages = new LanguageStore(this);
 
     this.registerStore(this.languages);
 
     const pieceDirectory = join(__dirname, "../../");
-    for (const store of this.pieceStores.values()) store.registerPieceDirectory(pieceDirectory);
+    for (const store of this.stores.values()) store.registerPieceDirectory(pieceDirectory);
 
     console.log(`[Client] Начинается авторизация клиента`);
   }
 
   registerStore(store) {
-    this.pieceStores.set(store.name, store);
+    this.stores.set(store.name, store);
     return this;
   }
 
   async login(token) {
-    console.log("pieceStores", this.pieceStores);
     const loaded = await Promise.all(
-      this.pieceStores.map(
-        async (store) => `[Loader] Loaded ${await store.loadAll()} ${store.name}.`
+      this.stores.map(
+        async (store) => `[Loader] Загружено ${await store.loadAll()} ${store.names[1]}.`
       )
     ).catch((err) => {
       console.error(err);
       process.exit();
     });
     console.log(loaded.join("\n"));
+    super.login(token);
+    return this;
   }
-
-  //
 
   loadCommands() {
     console.log(`\n[Commands] Начинается загрузка команд`);
