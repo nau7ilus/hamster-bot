@@ -467,6 +467,18 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@kwsites/file-exists@^1.0.0":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@kwsites/file-exists/-/file-exists-1.1.1.tgz#ad1efcac13e1987d8dbaf235ef3be5b0d96faa99"
+  integrity sha512-m9/5YGR18lIwxSFDwfE3oA7bWuq9kdau6ugN4H2rJeyhFQZcG9AgSHkQtSD15a8WvTgfz9aikZMrKPHvbpqFiw==
+  dependencies:
+    debug "^4.1.1"
+
+"@kwsites/math-sum@^1.0.0":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@kwsites/math-sum/-/math-sum-1.0.1.tgz#f498c0896c6033626195bb26b275e63587422a80"
+  integrity sha512-Nk2Yg8SFJGgNBbVhCaO823325PXV8n5eSEl7PxacpMgeqTCUmHMIgScG2/o6JiHRoDYgq8JBvJuIU0SvRPgxxg==
+
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
@@ -1981,11 +1993,6 @@ fresh@0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=
-
-fs-nextra@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/fs-nextra/-/fs-nextra-0.5.1.tgz#acf8bd3785a46a30573d3be768e158652191fafc"
-  integrity sha512-93pi+T9yVoiUduWeLCkxgnSHWiJoplFdINdUZtNhH//DCoW7/Ee3St/NjVIdkc0UuCeU9+WVWHK+AX2JmRIMBw==
 
 fs.realpath@^1.0.0:
   version "1.0.0"
@@ -3948,6 +3955,14 @@ readable-stream@^2.3.5:
     safe-buffer "~5.1.1"
     string_decoder "~1.1.1"
     util-deprecate "~1.0.1"
+
+readdir@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/readdir/-/readdir-1.0.2.tgz#770ed83f2369767163d653376ac106141c54e38c"
+  integrity sha512-/fOSAvuHNv3IyE1/GXuz7o0d+EIwe35a0Qd/yXWs48KKas0TnxhzHVmExFmMRsWgozaCWBQ81kNyXB7uD+iYow==
+  dependencies:
+    "@kwsites/file-exists" "^1.0.0"
+    "@kwsites/math-sum" "^1.0.0"
 
 readdirp@~3.4.0:
   version "3.4.0"
