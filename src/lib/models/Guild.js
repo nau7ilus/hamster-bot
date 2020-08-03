@@ -1,9 +1,6 @@
 const { Schema, model } = require("mongoose");
 const { Structures } = require("discord.js");
 
-const AdvancedGuild = Structures.get("Guild");
-const client = require("../../index");
-
 const GuildSchema = new Schema(
   {
     id: {
@@ -71,13 +68,5 @@ const GuildSchema = new Schema(
     versionKey: false,
   }
 );
-
-GuildSchema.post("findOneAndUpdate", (doc) => {
-  const guild = new AdvancedGuild(client, { id: doc.id });
-
-  // console.log(new test(client, { id: doc.id }).settings);
-  // const guild = new AdvancedGuild(client, { id: doc.id });
-  // console.log(guild.test);
-});
 
 module.exports = model("guilds", GuildSchema);
