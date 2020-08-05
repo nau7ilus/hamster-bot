@@ -40,7 +40,7 @@ exports.sendErrorMessage = ({
             .setColor(color || "#ff3333")
             .setTitle(`**${emoji} | Произошла ошибка**`)
             .setDescription(`**${member}, ${content}**`)
-            .setFooter("HamsterBot | Ошибка", message.guild.me.user.displayAvatarURL())
+            .setFooter("HamsterBot | Ошибка", message.client.user.displayAvatarURL())
     )
     .then((msg) => setTimeout(() => msg.delete(), 60 * 1000));
 };
