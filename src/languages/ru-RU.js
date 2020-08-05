@@ -5,6 +5,7 @@ module.exports = class extends Language {
     return {
       DEFAULT: (key) => `${key} еще не переведен под русский язык.`,
       DEFAULT_LANGUAGE: "Язык по умолчанию",
+      ERR_GIF_FIND: ["**Произошла ошибка при поиске картинки.**", "**Попробуйте позже.**"],
     };
   }
 };

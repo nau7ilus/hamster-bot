@@ -1,6 +1,7 @@
 const Guild = require("lib/models/Guild");
-const { onRunError, sendErrorMessage, checkPermissions, missingPermsError } = require("lib/utils");
 const createRequest = require("commands/RoleRequests/createRequest");
+
+const { onRunError, sendErrorMessage, checkPermissions, missingPermsError } = require("lib/utils");
 
 module.exports = async (client, message) => {
   // Если это бот, выходим
@@ -11,6 +12,8 @@ module.exports = async (client, message) => {
   const isGuild = !!message.guild;
   let guildData = isGuild ? await Guild.findOne({ id: message.guild.id }).cache() : null;
   if (isGuild && !guildData) guildData = await Guild.create({ id: message.guild.id });
+
+  message.language = message.getLanguage(guildData);
 
   // Проверяем, включена ли система выдачи ролей
   if (
@@ -40,10 +43,11 @@ module.exports = async (client, message) => {
 
   // Находим команду в базе данных
   const cmdName = args[0].toLowerCase().normalize();
-  const cmd =
-    client.commands.find((c) => c.name == cmdName || (c.aliases && c.aliases.includes(cmdName))) ||
-    false;
   args.shift();
+
+  const cmd = client.commands.find(
+    (c) => c.name == cmdName || (c.aliases && c.aliases.includes(cmdName)) || null
+  );
 
   // Если команда есть в БД
   if (cmd && !!thisPrefix) {
