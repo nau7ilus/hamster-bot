@@ -13,7 +13,7 @@ const client = new Client({
 });
 
 client.login(process.env.DISCORD_TOKEN);
-client.loadCommands().loadEvents().initializeHTTPServer();
+client.loadEvents().initializeHTTPServer();
 
 cachegoose(mongoose);
 mongoose.connect(

@@ -1,12 +1,15 @@
 const Command = require("lib/structures/Command");
 
-module.exports = new Command(
-  {
-    name: "eval",
-    description: "Выполнить команду",
-    devOnly: true,
-  },
-  async (client, message, args) => {
+module.exports = class extends Command {
+  constructor(...args) {
+    super(...args, {
+      name: "eval",
+      description: "Выполнить команду",
+      devOnly: true,
+    });
+  }
+
+  async run(client, message, args) {
     eval(args.join(" "));
   }
-);
+};
