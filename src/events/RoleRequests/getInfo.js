@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const { sendErrorMessage } = require("../../../utils");
+const { sendErrorMessage } = require("lib/utils");
 
 exports.run = async ({
   tagInfo,
@@ -112,7 +112,6 @@ exports.run = async ({
 
   editRequestMessage({
     message,
-    guildData,
     member: requestAuthor || `<@!${embedAuthorId}>`, // eslint-disable-line
     rolesToGive,
     channel,
@@ -121,10 +120,10 @@ exports.run = async ({
   return reaction.users.remove(reactedMember);
 };
 
-function editRequestMessage({ message, guildData, member, rolesToGive, channel, whatChanged }) {
+function editRequestMessage({ message, member, rolesToGive, channel, whatChanged }) {
   message.edit(
     new MessageEmbed()
-      .setColor(guildData.common.color)
+      .setColor("#b8ff29")
       .setTitle("**📨 | Запрос роли**")
       .addFields(
         { name: `**Пользователь**`, value: `**${member}**`, inline: true },

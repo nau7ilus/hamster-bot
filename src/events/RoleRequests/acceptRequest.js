@@ -4,7 +4,7 @@ const {
   checkPermissions,
   missingPermsError,
   localizePerm,
-} = require("../../../utils");
+} = require("lib/utils");
 
 exports.run = async ({
   tagInfo,

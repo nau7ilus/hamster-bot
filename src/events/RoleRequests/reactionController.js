@@ -56,8 +56,7 @@ exports.run = async ({ client, reaction, reactedUser, guildData }) => {
     ? guildData.give_role.tags.find((tag) => tag.names.includes(requestInfo.user.nick_info[1]))
     : null;
 
-  if (emoji.name == "✅")
-    return run(require("../../events/RoleRequests/reactionActions/acceptRequest"));
+  if (emoji.name == "✅") return run(require("./acceptRequest"));
   else if (emoji.name == "🔎") return run(require("./getInfo"));
   else if (emoji.name == "❌") return run(require("./rejectRequest"));
   else if (emoji.name == "🗑️") return run(require("./deleteRequest"));

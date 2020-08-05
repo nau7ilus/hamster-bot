@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const { sendErrorMessage } = require("../../../utils");
+const { sendErrorMessage } = require("lib/utils");
 
 exports.run = async ({
   tagInfo,
