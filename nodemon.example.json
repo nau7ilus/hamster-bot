@@ -1,0 +1,10 @@
+{
+  "env": {
+    "NODE_PATH": "./src",
+    "DISCORD_TOKEN": "",
+    "DISCORD_SECRET": "",
+    "WEBSITE_URL": "",
+    "DATABASE_URL": "",
+    "JWT_PRIVATE": ""
+  }
+}
