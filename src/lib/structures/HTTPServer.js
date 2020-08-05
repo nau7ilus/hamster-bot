@@ -30,13 +30,12 @@ module.exports = class HTTPServer {
 
     this.app.use(
       morgan(
-        `\n[HTTP]
-          ':method :url - IP :remote-addr - Код :status - Размер :res[content-length] B - Время обработки :response-time ms'`
+        `\n[HTTP] :method :url - IP :remote-addr - Код :status - Размер :res[content-length] B - Время обработки :response-time ms`
       )
     );
 
     this.app.listen(port, () => {
-      console.log(`[HTTP] Сервер запущен на порту ${port}`);
+      console.log(`[HTTP] Сервер запущен на порту ${port}\n`);
     });
 
     return this.initializeRoutes();
@@ -68,7 +67,7 @@ module.exports = class HTTPServer {
 
     route._register(this.app);
     this.httpRoutes.push(route);
-    console.log(`[HTTP] Маршрут /${route.name} успешно загрузки`);
+    console.log(`[HTTP] Маршрут /${route.name} успешно загружен`);
     return true;
   }
 };
