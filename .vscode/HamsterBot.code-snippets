@@ -5,22 +5,25 @@
     "body": [
       "const Command = require(\"lib/structures/Command\");",
       "",
-      "module.exports = new Command(",
-      "\t{",
-      "\t\tname: \"\",",
-      "\t\tdescription: \"\",",
-      "\t\taliases: [],",
-      "\t\tusage: \"\",",
-      "\t\tdevOnly: true,",
-      "\t\tclientPermissions: [],",
-      "\t\tuserPermissions: [],",
-      "\t\tguildOnly: true,",
-      "\t\tnsfw: false,",
-      "\t},",
-      "\t\tasync (client, message, args, guildData) => {",
-      "",
+      "module.exports = class extends Command {",
+      "\tconstructor(...args) {",
+      "\t\tsuper(...args, {",
+      "\t\t\tname: \"\",",
+      "\t\t\taliases: [\"\"],",
+      "\t\t\tdescription: \"\",",
+      "\t\t\tclientPermissions: [\"\"],",
+      "\t\t\tuserPermissions: [\"\"],",
+      "\t\t\tguildOnly: true,",
+      "\t\t\tdevOnly: false,",
+      "\t\t\tnsfw: false,",
+      "\t\t});",
       "\t}",
-      ");"
+      "",
+      "\tasync run(client, message, args, guildData) {",
+      "\t\t// ...",
+      "\t}",
+      "}; ",
+      ""
     ],
     "description": "Шаблон для новой команды"
   },
@@ -39,7 +42,8 @@
       "\t}",
       ");",
       "",
-      "module.exports = model(\"\", TestSchema);"
+      "module.exports = model(\"\", TestSchema); ",
+      ""
     ],
     "description": "Шаблон для новой модели"
   },
@@ -50,9 +54,9 @@
       "const { Router } = require(\"express\");",
       "const Route = require(\"lib/structures/Route\");",
       "",
-      "module.exports = class WebRoute extends Route {",
+      "module.exports = class extends Route {",
       "\tconstructor(client) {",
-      "\t\tsuper({ name: \"user\", parentRoute: \"\", subRoutes: [] }, client);",
+      "\t\tsuper({ name: \"user\", parent: \"\", subRoutes: [] }, client);",
       "\t}",
       "",
       "\tregister(app) {",
@@ -64,7 +68,8 @@
       "",
       "\t\tapp.use(this.path, router);",
       "\t}",
-      "};"
+      "}; ",
+      ""
     ],
     "description": "Шаблон для новой модели"
   }
