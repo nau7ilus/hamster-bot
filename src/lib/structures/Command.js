@@ -1,39 +1,28 @@
-const { readdirSync } = require("fs");
+const AliasPiece = require("./Base/AliasPiece");
 
-module.exports = class Command {
-  constructor(props, runFunction) {
-    this.name = props.name;
-    this.description = props.description;
-    this.category = props.category
-      ? props.category
-      : () => {
-          const cats = readdirSync("./src/cmds");
-          cats.forEach((dir) => {
-            const cat = readdirSync(`./src/cmds/${dir}`);
-            if (cat.includes(`${this.name}.js`)) return dir;
-            else return "Unknown";
-          });
-        };
+class Command extends AliasPiece {
+  constructor(store, file, directory, options = {}) {
+    super(store, file, directory, options);
+    this.name = options.name;
+    this.description = options.description;
+    this.category = options.category || file.split("/")[0];
     this.clientPermissions =
-      props.clientPermissions && props.clientPermissions.length > 0
-        ? props.clientPermissions
+      options.clientPermissions && options.clientPermissions.length > 0
+        ? options.clientPermissions
         : ["SEND_MESSAGES"];
     this.userPermissions =
-      props.userPermissions && props.userPermissions.length > 0
-        ? props.userPermissions
+      options.userPermissions && options.userPermissions.length > 0
+        ? options.userPermissions
         : ["SEND_MESSAGES"];
-    if (this.category === "administration") this.userPermissions = ["ADMINISTRATOR"];
 
-    this.aliases = props.aliases;
-    this.guildOnly = props.guildOnly;
-    this.devOnly = props.devOnly;
-    this.nsfw = props.nsfw;
-
-    this.run = runFunction;
+    this.guildOnly = options.guildOnly;
+    this.devOnly = options.devOnly;
+    this.nsfw = options.nsfw;
   }
 
-  deleteMessage(message) {
-    const client = require("../../index.js");
-    if (client.hasPermission("MANAGE_MESSAGES")) message.delete();
+  async run() {
+    throw new Error("Функция на запуск команды " + this.name + "не указана");
   }
-};
+}
+
+module.exports = Command;

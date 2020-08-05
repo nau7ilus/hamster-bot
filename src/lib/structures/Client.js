@@ -3,25 +3,24 @@ const { readdirSync } = require("fs");
 const { join } = require("path");
 
 const HTTPServer = require("./HTTPServer");
-const Command = require("./Command");
 const LanguageStore = require("./LanguageStore");
+const CommandStore = require("./CommandStore");
 
-require("lib/extensions/Guild");
+require("../extensions/Guild");
+require("../extensions/Message");
 
 module.exports = class AdvancedClient extends Client {
   constructor(options) {
     super();
-    // super.login(options.token);
-
     this.developers = options.devs;
     this.language = options.language || "ru-RU";
     this.prefix = options.prefix || "/";
-    this.commands = new Collection();
 
     this.stores = new Collection();
     this.languages = new LanguageStore(this);
+    this.commands = new CommandStore(this);
 
-    this.registerStore(this.languages);
+    this.registerStore(this.commands).registerStore(this.languages);
 
     const pieceDirectory = join(__dirname, "../../");
     for (const store of this.stores.values()) store.registerPieceDirectory(pieceDirectory);
@@ -30,7 +29,7 @@ module.exports = class AdvancedClient extends Client {
   }
 
   registerStore(store) {
-    this.stores.set(store.name, store);
+    this.stores.set(store.names[0], store);
     return this;
   }
 
@@ -45,25 +44,6 @@ module.exports = class AdvancedClient extends Client {
     });
     console.log(loaded.join("\n"));
     super.login(token);
-    return this;
-  }
-
-  loadCommands() {
-    console.log(`\n[Commands] Начинается загрузка команд`);
-    let success = 0;
-    let failed = 0;
-
-    const dirs = readdirSync("./src/commands");
-    console.log(`[Commands] Категорий: ${dirs.length}`);
-    dirs.forEach((dir) => {
-      const files = readdirSync(`./src/commands/${dir}`).filter((name) => name.endsWith(".js"));
-      console.log(`\n[Commands] Кол-во команд в папке ${dir}: ${files.length}`);
-      files.forEach((file) => (this._loadCommand(`commands/${dir}`, file) ? success++ : failed++));
-    });
-
-    if (failed)
-      console.warn(`[Commands] Успешно загружено команд: ${success}, в ${failed} ошибка.`);
-    else console.log(`[Commands] Успешно загружено команд: ${success}`);
     return this;
   }
 
@@ -96,26 +76,5 @@ module.exports = class AdvancedClient extends Client {
   // Является ли пользователь разработчиком
   isDev(id) {
     return this.developers.includes(id);
-  }
-
-  _loadCommand(path, name) {
-    const cmd = require(`${path}/${name}`);
-    // Является ли командой?
-    if (!(cmd instanceof Command)) {
-      console.log(`[Commands] Ошибка загрузки файла ${name}. Не является командой`);
-      return false;
-    }
-
-    // Соответствует ли название файла названию команды
-    if (cmd.name !== name.split(".js")[0]) {
-      console.log(
-        `[Commands] Ошибка загрузки файла ${name}. Название команды несоответствует названию файла`
-      );
-      return false;
-    }
-
-    this.commands.set(name, cmd);
-    console.log(`[Commands] Команда ${name} успешно загружена`);
-    return true;
   }
 };

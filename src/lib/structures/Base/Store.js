@@ -66,10 +66,6 @@ class Store extends Collection {
     const files = readSync(directory, ["**.js"]);
     return files ? files.map((file) => store.load(directory, file)) : true;
   }
-
-  static get [Symbol.species]() {
-    return Collection;
-  }
 }
 
 module.exports = Store;
