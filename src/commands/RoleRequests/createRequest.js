@@ -17,7 +17,7 @@ module.exports = class extends Command {
     });
   }
 
-  async run(client, message, args, guildData) {
+  async run({ message, guildData }) {
     const requestSettings = guildData.give_role;
 
     // Проверяем, разрешено ли использование системы в данном канале

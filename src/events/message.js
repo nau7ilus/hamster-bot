@@ -1,5 +1,4 @@
 const Guild = require("lib/models/Guild");
-const createRequest = require("commands/RoleRequests/createRequest");
 
 const { onRunError, sendErrorMessage, checkPermissions, missingPermsError } = require("lib/utils");
 
@@ -24,9 +23,10 @@ module.exports = async (client, message) => {
     // Создаем регулярное выражение, включая слова-триггеры для системы
     let systemTrigger = new RegExp(`^(?:${guildData.give_role.trigger_words.join("|")})$`, "gi");
     if (systemTrigger.test(message.content)) {
+      const createRequest = client.commands.find((c) => c.name == "supersecretcommand") || null;
       return createRequest
-        .run({ message, guildData, client })
-        .catch((warning) => onRunError({ client, warning, message }));
+        .run({ client, message, guildData })
+        .catch((warning) => onRunError({ warning, client, message }));
     }
   }
 
@@ -122,7 +122,7 @@ module.exports = async (client, message) => {
 
     // Запускаем команду
     return cmd
-      .run(client, message, args, guildData)
+      .run({ client, message, guildData, args })
       .catch((warning) => onRunError({ warning, client, message }));
   }
 };

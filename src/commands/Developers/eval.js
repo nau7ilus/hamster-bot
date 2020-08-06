@@ -9,7 +9,7 @@ module.exports = class extends Command {
     });
   }
 
-  async run(client, message, args) {
+  async run({ args }) {
     eval(args.join(" "));
   }
 };
