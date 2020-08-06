@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const { readdirSync } = require("fs");
 
-const Route = require("./Route");
+const Route = require("./API/Route");
 
 module.exports = class HTTPServer {
   constructor(client) {
@@ -30,7 +30,7 @@ module.exports = class HTTPServer {
 
     this.app.use(
       morgan(
-        `\n[HTTP] :method :url - IP :remote-addr - Код :status - Размер :res[content-length] B - Время обработки :response-time ms`
+        `[HTTP] :method :url - IP :remote-addr - Код :status - Размер :res[content-length] B - Время обработки :response-time ms`
       )
     );
 
