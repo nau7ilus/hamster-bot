@@ -56,7 +56,7 @@
       "",
       "module.exports = class extends Route {",
       "\tconstructor(client) {",
-      "\t\tsuper({ name: \"user\", parent: \"\", subRoutes: [] }, client);",
+      "\t\tsuper(\"\", client);",
       "\t}",
       "",
       "\tregister(app) {",
