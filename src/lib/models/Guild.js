@@ -7,18 +7,16 @@ const GuildSchema = new Schema(
       unique: true,
     },
 
-    is_premium: {
-      type: Boolean,
-      default: false,
-    },
-
     common: {
       prefix: {
         type: String,
         maxlength: 20,
         default: "/",
       },
-
+      is_premium: {
+        type: Boolean,
+        default: false,
+      },
       language: String,
     },
 
