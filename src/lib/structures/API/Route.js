@@ -1,6 +1,6 @@
 module.exports = class Route {
-  constructor(options, client) {
-    this.name = options.name;
+  constructor(name, client) {
+    this.name = name;
     this.client = client;
   }
 
