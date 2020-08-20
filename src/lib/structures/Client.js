@@ -2,7 +2,7 @@ const { Client, Collection } = require("discord.js");
 const { readdirSync } = require("fs");
 const { join } = require("path");
 
-const HTTPServer = require("./HTTPServer");
+const HTTPServer = require("api/server");
 const LanguageStore = require("./LanguageStore");
 const CommandStore = require("./CommandStore");
 

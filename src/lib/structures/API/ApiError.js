@@ -1,13 +1,13 @@
 class APIError extends Error {
-  constructor({ message, status = 500, code = 20000, details = null }) {
+  constructor(props = { message: "", status: 500, code: 20000, details: null }) {
     super();
     Error.captureStackTrace(this, this.constructor);
     this.error = {
-      message: message || "Что-то пошло не так. Попробуйте чуть позже.",
-      more_info: process.env.WEBSITE_URL + "/docs/errors/" + code,
-      details,
-      code,
-      status,
+      message: props.message || "Что-то пошло не так. Попробуйте чуть позже.",
+      more_info: process.env.WEBSITE_URL + "/docs/errors/" + props.code,
+      details: props.details,
+      code: props.code,
+      status: props.status,
     };
   }
 }

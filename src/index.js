@@ -12,9 +12,6 @@ const client = new Client({
   ],
 });
 
-client.login(process.env.DISCORD_TOKEN);
-client.loadEvents().initializeHTTPServer();
-
 cachegoose(mongoose);
 mongoose.connect(
   process.env.DATABASE_URL,
@@ -29,5 +26,8 @@ mongoose.connect(
     console.log("[Database] База данных Mongo успешно подключена.");
   }
 );
+
+client.login(process.env.DISCORD_TOKEN);
+client.loadEvents().initializeHTTPServer();
 
 module.exports = client;

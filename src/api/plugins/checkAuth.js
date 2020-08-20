@@ -7,9 +7,9 @@ module.exports = (req, res, next) => {
     const decoded = verify(token, process.env.JWT_PRIVATE);
     req.userData = decoded;
     next();
-  } catch (error) {
+  } catch (err) {
     return res
-      .status(403)
-      .json(new APIError({ message: "Отсутствует доступ", status: 403, details: error }));
+      .code(403)
+      .send(new APIError({ message: "Отсутствует доступ", status: 403, details: err }));
   }
 };
