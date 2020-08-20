@@ -2,5 +2,12 @@
   "compilerOptions": {
     "baseUrl": "src"
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "test/Fun",
+    "trash/Fun",
+    "trash/Misc",
+    "trash/Moderation",
+    "trash/RoleRequests"
+  ]
 }
