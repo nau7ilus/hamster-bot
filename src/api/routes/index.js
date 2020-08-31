@@ -6,7 +6,18 @@ const userSchema = require("api/schemas/users");
 const checkAuth = require("api/plugins/checkAuth");
 
 const routes = [
-  { method: "GET", url: "/guilds/:guildId/:action", handler: guildController.getGuildData },
+  {
+    method: "GET",
+    url: "/guilds/:guildId/:action",
+    handler: guildController.getGuildData,
+    preHandler: checkAuth,
+  },
+  {
+    method: "PATCH",
+    url: "/guilds/:guildId/:action",
+    handler: guildController.changeGuildData,
+    preHandler: checkAuth,
+  },
 
   { method: "GET", url: "/public/blur", handler: publicController.blurImage },
 

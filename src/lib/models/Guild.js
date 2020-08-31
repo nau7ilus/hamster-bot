@@ -7,17 +7,22 @@ const GuildSchema = new Schema(
       unique: true,
     },
 
+    is_premium: {
+      type: Boolean,
+      default: false,
+    },
+
     common: {
       prefix: {
         type: String,
         maxlength: 20,
         default: "/",
       },
-      is_premium: {
-        type: Boolean,
-        default: false,
-      },
-      language: String,
+      language: { type: String, default: "ru-RU" },
+
+      private_help: { type: Boolean, default: false },
+      delete_error_after: { type: Number, default: 10 },
+      delete_success_after: { type: Number, default: 20 },
     },
 
     give_role: {
@@ -58,6 +63,16 @@ const GuildSchema = new Schema(
           manage_roles: Array, // Список ролей, которые могут ей управлять
         },
       ],
+    },
+
+    commands: {
+      misc: {
+        help: {
+          is_enabled: { type: Boolean, default: true },
+          nsfw: { type: Boolean, default: false },
+          delete_src: { type: Boolean, default: false },
+        },
+      },
     },
   },
   {
