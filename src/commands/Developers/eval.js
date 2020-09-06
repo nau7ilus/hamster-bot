@@ -8,8 +8,8 @@ module.exports = class extends Command {
       devOnly: true,
     });
   }
-
-  async run({ args }) {
+  // eslint-disable-next-line
+  async run({ args, message }) {
     eval(args.join(" "));
   }
 };
