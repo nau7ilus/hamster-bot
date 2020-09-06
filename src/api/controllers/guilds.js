@@ -66,24 +66,13 @@ exports.changeGuildData = async (req, res) => {
     // Нет такого типа данных в модели?
     if (!guildSettings[action]) return res.code(400).send({ error: "Тип данных указан неверно" });
 
-    console.log("guildSettings", guildSettings);
-    console.log("guildSettings[action]", guildSettings[action], "\n");
-
     // Изменение данных
     for (let i in guildSettings[action].toJSON()) {
-      console.log("i", i);
-      console.log("guildSettings[action][i]", guildSettings[action][i]);
-      console.log("givenData[i]", givenData[i]);
-      // console.log(i, guildSettings[action][i], "в", givenData[i]);
       if (givenData[i] !== guildSettings[action][i]) {
         guildSettings[action][i] = givenData[i];
-        console.log("замена");
       }
-      console.log();
     }
     await guildSettings.save();
-
-    console.log(guildSettings[action]);
 
     // Возвращаем измененные данные
     return guildSettings[action];
