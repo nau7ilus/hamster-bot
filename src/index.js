@@ -1,3 +1,5 @@
+require("dotenv/env");
+
 const mongoose = require("mongoose");
 const cachegoose = require("cachegoose");
 
