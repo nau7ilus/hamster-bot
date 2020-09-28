@@ -73,7 +73,7 @@ exports.loginUser = async (req, res) => {
     const token = sign({ access_token, token_type, id }, process.env.JWT_PRIVATE);
     return res.code(200).send({ access_token: token, token_type });
   } catch (err) {
-    console.log(err);
+    console.log(err.toJSON());
     res.code(500).send(
       new APIError({
         message: "Произошла ошибка при запросе токена у Discord",
