@@ -1,6 +1,6 @@
 {
   "name": "hamster-bot",
-  "main": "/src/index.js",
+  "main": "./src/index.js",
   "author": "Hamster team",
   "license": "Apache 2.0",
   "private": true,
