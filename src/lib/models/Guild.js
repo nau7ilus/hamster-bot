@@ -51,7 +51,7 @@ const GuildSchema = new Schema(
       // eslint-disable-next-line
       name_regexp: {
         type: String,
-        default: "[([a-zA-Zа-яА-Я '-]+ ?)][ _]?[(d+)] ?([a-zA-Z]+[ |_][a-zA-Z]+)",
+        default: "\\[([a-zA-Zа-яА-Я '\\-]+ ?)\\][ _]?\\[(\\d+)\\] ?([a-zA-Z]+[ |_][a-zA-Z]+)",
       },
 
       // Список слов, на которые бот будет реагировать в указанном канале
