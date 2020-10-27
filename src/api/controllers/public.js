@@ -1,11 +1,14 @@
-const sharp = require("sharp");
-const { get } = require("axios");
+/* eslint-disable capitalized-comments */
+'use strict';
 
-const allowedPrefixes = [
-  "https://cdn.discordapp.com/icons/",
-  "https://robo-hamster.ru/img/",
-  "http://localhost:8080/img/",
-];
+const { get } = require('axios');
+const sharp = require('sharp');
+
+// const allowedPrefixes = [
+//   'https://cdn.discordapp.com/icons/',
+//   'https://robo-hamster.ru/img/',
+//   'http://localhost:8080/img/',
+// ];
 
 exports.blurImage = async (req, res) => {
   const sourceURL = req.query.s || null;
@@ -16,12 +19,12 @@ exports.blurImage = async (req, res) => {
   // }
 
   const sourceBinary = await _getBinary(sourceURL);
-  const bluredImg = await sharp(sourceBinary).resize(1080, 1080).blur(20).png().toBuffer();
-  res.type("image/png").send(bluredImg);
+  const bluredImg = sharp(sourceBinary).resize(1080, 1080).blur(20);
+  res.type('image/png').send(await bluredImg.png().toBuffer());
 };
 
-async function _getBinary(url) {
+function _getBinary(url) {
   return get(url, {
-    responseType: "arraybuffer",
-  }).then((response) => Buffer.from(response.data, "binary"));
+    responseType: 'arraybuffer',
+  }).then(response => Buffer.from(response.data, 'binary'));
 }
