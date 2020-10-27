@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config();
+
 const cachegoose = require('cachegoose');
 const mongoose = require('mongoose');
 
