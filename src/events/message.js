@@ -1,7 +1,7 @@
 'use strict';
 
-const { onRunError, sendErrorMessage, checkPermissions, missingPermsError } = require('utils');
 const Guild = require('../models/Guild');
+const { onRunError, sendErrorMessage, checkPermissions, missingPermsError } = require('../utils');
 
 module.exports = async (client, message) => {
   if (message.author.bot || message.system) return;
