@@ -1,5 +1,7 @@
-const fastify = require("fastify");
-const routes = require("./routes");
+'use strict';
+
+const fastify = require('fastify');
+const routes = require('./routes');
 
 module.exports = class {
   constructor(client) {
@@ -7,36 +9,31 @@ module.exports = class {
   }
 
   async load() {
-    try {
-      await this.startServer();
-      return true;
-    } catch (err) {
-      console.error(err);
-    }
+    await this.startServer();
   }
 
-  startServer(port = process.env.PORT || 3000) {
+  startServer(port = process.env.PORT || 4000) {
     this.app = fastify();
     this.loadRoutes();
 
     this.app
-      .register(require("fastify-cors"))
-      .addHook("onRequest", (req, res, done) => {
+      .register(require('fastify-cors'))
+      .addHook('onRequest', (req, res, done) => {
         req.client = this.client;
         done();
       })
-      .listen(port, "0.0.0.0")
+      .listen(port, '0.0.0.0')
       .then(() => {
-        console.log("[HTTP] Сервер успешно запущен на порту %d", port);
+        console.log('[HTTP] Сервер успешно запущен на порту %d', port);
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err);
         process.exit(1);
       });
   }
 
   loadRoutes() {
-    routes.forEach((route) => {
+    routes.forEach(route => {
       this.app.route(route);
     });
   }
