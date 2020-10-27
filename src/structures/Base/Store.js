@@ -1,21 +1,24 @@
-const { Collection } = require("discord.js");
-const { join } = require("path");
-const { readSync } = require("readdir");
+'use strict';
 
-const { isClass } = require("lib/utils/Utils");
+const { join } = require('path');
+const { Collection } = require('discord.js');
+const { readSync } = require('readdir');
+
+const { isClass } = require('utils/Utils');
 
 class Store extends Collection {
   constructor(client, names, holds) {
     super();
     this.client = client;
-    this.names = names; // [eng, rus]
+    this.names = names;
     this.holds = holds;
     this.directories = new Set();
   }
 
   set(piece) {
-    if (!(piece instanceof this.holds))
+    if (!(piece instanceof this.holds)) {
       throw new TypeError(`В этом магазине могут быть сохранены только ${this}`);
+    }
     const existing = this.get(piece.name);
     if (existing) this.delete(existing);
     super.set(piece.name, piece);
@@ -31,7 +34,7 @@ class Store extends Collection {
 
   loadAll() {
     this.clear();
-    this.directories.forEach(async (directory) => await Store.walk(this, directory));
+    this.directories.forEach(directory => Store.walk(this, directory));
     return this.size;
   }
 
@@ -62,9 +65,9 @@ class Store extends Collection {
     return this;
   }
 
-  static async walk(store, directory) {
-    const files = readSync(directory, ["**.js"]);
-    return files ? files.map((file) => store.load(directory, file)) : true;
+  static walk(store, directory) {
+    const files = readSync(directory, ['**.js']);
+    return files ? files.map(file => store.load(directory, file)) : true;
   }
 }
 
