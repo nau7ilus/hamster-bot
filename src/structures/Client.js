@@ -54,7 +54,7 @@ module.exports = class AdvancedClient extends Client {
     let total = 0;
 
     files.forEach(file => {
-      const event = require(`events/${file}`);
+      const event = require(`../events/${file}`);
       const eventName = file.split('.js')[0];
       this.on(eventName, event.bind(null, this));
       total++;
