@@ -1,13 +1,15 @@
-const Piece = require("./Base/Piece");
+'use strict';
+
+const Piece = require('./Base/Piece');
 
 class Language extends Piece {
   get(term, ...args) {
     if (!this.enabled && this !== this.store.default) return this.store.default.get(term, ...args);
     const phrase = this.phrases[term];
     switch (typeof phrase) {
-      case "function":
+      case 'function':
         return phrase(...args);
-      case "undefined":
+      case 'undefined':
         if (this === this.store.default) return this.phrases.DEFAULT(term);
         return `${this.phrases.DEFAULT(term)}\n\n**${
           this.phrases.DEFAULT_LANGUAGE
