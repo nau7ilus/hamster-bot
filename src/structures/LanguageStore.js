@@ -1,9 +1,11 @@
-const Language = require("./Language");
-const Store = require("./Base/Store");
+'use strict';
+
+const Store = require('./Base/Store');
+const Language = require('./Language');
 
 class LanguageStore extends Store {
   constructor(client) {
-    super(client, ["languages", "языков"], Language);
+    super(client, ['languages', 'языков'], Language);
   }
 
   get default() {
