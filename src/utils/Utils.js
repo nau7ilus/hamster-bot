@@ -1,9 +1,11 @@
+'use strict';
+
 class Util {
   static isClass(input) {
     return (
-      typeof input === "function" &&
-      typeof input.prototype === "object" &&
-      input.toString().substring(0, 5) === "class"
+      typeof input === 'function' &&
+      typeof input.prototype === 'object' &&
+      input.toString().substring(0, 5) === 'class'
     );
   }
 
@@ -39,7 +41,7 @@ class Util {
   static mergeDefault(def, given) {
     if (!given) return Util.deepClone(def);
     for (const key in def) {
-      if (typeof given[key] === "undefined") given[key] = Util.deepClone(def[key]);
+      if (typeof given[key] === 'undefined') given[key] = Util.deepClone(def[key]);
       else if (Util.isObject(given[key])) given[key] = Util.mergeDefault(def[key], given[key]);
     }
 
