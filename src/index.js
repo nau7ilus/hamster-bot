@@ -1,13 +1,12 @@
-const mongoose = require("mongoose");
-const cachegoose = require("cachegoose");
+'use strict';
 
-const Client = require("lib/structures/Client");
+const cachegoose = require('cachegoose');
+const mongoose = require('mongoose');
+
+const Client = require('./structures/Client');
 
 const client = new Client({
-  devs: [
-    "422109629112254464", // Филипп
-    "395623202048704514", // Валик
-  ],
+  devs: ['422109629112254464', '395623202048704514'],
 });
 
 cachegoose(mongoose);
@@ -19,13 +18,14 @@ mongoose.connect(
     useCreateIndex: true,
     useFindAndModify: false,
   },
-  async (err) => {
+  err => {
     if (err) throw err;
-    console.log("[Database] База данных Mongo успешно подключена.");
-  }
+    console.log('[Database] База данных Mongo успешно подключена.');
+  },
 );
 
-client.login(process.env.DISCORD_TOKEN);
+// Заменить загрузку ивентов под новый хендлер
+client.login();
 client.loadEvents().initializeHTTPServer();
 
 module.exports = client;
