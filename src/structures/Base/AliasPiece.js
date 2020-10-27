@@ -1,4 +1,6 @@
-const Piece = require("./Piece");
+'use strict';
+
+const Piece = require('./Piece');
 
 class AliasPiece extends Piece {
   constructor(store, file, directory, options = {}) {
