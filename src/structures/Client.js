@@ -1,20 +1,22 @@
-const { Client, Collection } = require("discord.js");
-const { readdirSync } = require("fs");
-const { join } = require("path");
+'use strict';
 
-const HTTPServer = require("api/server");
-const LanguageStore = require("./LanguageStore");
-const CommandStore = require("./CommandStore");
+const { readdirSync } = require('fs');
+const { join } = require('path');
+const { Client, Collection } = require('discord.js');
 
-require("../extensions/Guild");
-require("../extensions/Message");
+const CommandStore = require('./CommandStore');
+const LanguageStore = require('./LanguageStore');
+const HTTPServer = require('../api/server');
+
+require('../extensions/Guild');
+require('../extensions/Message');
 
 module.exports = class AdvancedClient extends Client {
   constructor(options) {
     super();
     this.developers = options.devs;
-    this.language = options.language || "ru-RU";
-    this.prefix = options.prefix || "/";
+    this.language = options.language || 'ru-RU';
+    this.prefix = options.prefix || '/';
 
     this.stores = new Collection();
     this.languages = new LanguageStore(this);
@@ -22,7 +24,7 @@ module.exports = class AdvancedClient extends Client {
 
     this.registerStore(this.commands).registerStore(this.languages);
 
-    const pieceDirectory = join(__dirname, "../../");
+    const pieceDirectory = join(__dirname, '../');
     for (const store of this.stores.values()) store.registerPieceDirectory(pieceDirectory);
 
     console.log(`[Client] Начинается авторизация клиента`);
@@ -35,14 +37,12 @@ module.exports = class AdvancedClient extends Client {
 
   async login(token) {
     const loaded = await Promise.all(
-      this.stores.map(
-        async (store) => `[Loader] Загружено ${await store.loadAll()} ${store.names[1]}.`
-      )
-    ).catch((err) => {
+      this.stores.map(async store => `[Loader] Загружено ${await store.loadAll()} ${store.names[1]}.`),
+    ).catch(err => {
       console.error(err);
       process.exit();
     });
-    console.log(loaded.join("\n"));
+    console.log(loaded.join('\n'));
     super.login(token);
     return this;
   }
@@ -50,12 +50,12 @@ module.exports = class AdvancedClient extends Client {
   loadEvents() {
     console.log(`\n[Events] Начинается загрузка событий`);
 
-    const files = readdirSync("./src/events").filter((name) => name.endsWith(".js"));
+    const files = readdirSync('./src/events').filter(name => name.endsWith('.js'));
     let total = 0;
 
-    files.forEach((file) => {
+    files.forEach(file => {
       const event = require(`events/${file}`);
-      const eventName = file.split(".js")[0];
+      const eventName = file.split('.js')[0];
       this.on(eventName, event.bind(null, this));
       total++;
 
@@ -67,7 +67,7 @@ module.exports = class AdvancedClient extends Client {
   }
 
   // Инициализация настроек
-  async initializeHTTPServer() {
+  initializeHTTPServer() {
     const server = new HTTPServer(this);
     server.load();
     return this;
