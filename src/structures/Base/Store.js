@@ -4,7 +4,7 @@ const { join } = require('path');
 const { Collection } = require('discord.js');
 const { readSync } = require('readdir');
 
-const { isClass } = require('utils/Utils');
+const { isClass } = require('../../utils/Utils');
 
 class Store extends Collection {
   constructor(client, names, holds) {
