@@ -1,5 +1,7 @@
-const { Collection } = require("discord.js");
-const Store = require("./Store");
+'use strict';
+
+const { Collection } = require('discord.js');
+const Store = require('./Store');
 
 class AliasStore extends Store {
   constructor(...args) {
