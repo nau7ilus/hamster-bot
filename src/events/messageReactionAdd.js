@@ -1,7 +1,7 @@
 'use strict';
 
-const Guild = require('models/Guild');
-const { onRunError } = require('utils');
+const Guild = require('../models/Guild');
+const { onRunError } = require('../utils');
 
 module.exports = async (client, reaction, reactedUser) => {
   // Если автор бот - выходим
