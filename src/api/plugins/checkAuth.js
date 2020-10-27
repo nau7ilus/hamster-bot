@@ -1,15 +1,15 @@
-const { verify } = require("jsonwebtoken");
-const APIError = require("lib/structures/API/ApiError");
+'use strict';
+
+const { verify } = require('jsonwebtoken');
+const APIError = require('../errors/APIError');
 
 module.exports = (req, res, next) => {
   try {
-    const token = req.headers.authorization.split(" ")[1];
+    const token = req.headers.authorization.split(' ')[1];
     const decoded = verify(token, process.env.JWT_PRIVATE);
     req.userData = decoded;
-    next();
+    return next();
   } catch (err) {
-    return res
-      .code(403)
-      .send(new APIError({ message: "Отсутствует доступ", status: 403, details: err }));
+    return res.code(403).send(new APIError({ message: 'Отсутствует доступ', status: 403, details: err }));
   }
 };
