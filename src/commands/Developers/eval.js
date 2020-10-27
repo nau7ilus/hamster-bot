@@ -1,6 +1,6 @@
 'use strict';
 
-const Command = require('structures/Command');
+const Command = require('../../structures/Command');
 
 module.exports = class extends Command {
   constructor(...args) {
