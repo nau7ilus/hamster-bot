@@ -2,7 +2,7 @@
 'use strict';
 
 const { MessageEmbed } = require('discord.js');
-const { sendErrorMessage, checkPermissions, missingPermsError, localizePerm } = require('utils');
+const { sendErrorMessage, checkPermissions, missingPermsError, localizePerm } = require('../../utils');
 
 exports.run = ({ tagInfo, requestInfo, reaction, requestAuthor, guildData, reactedMember }) => {
   const { message } = reaction;
@@ -90,6 +90,7 @@ exports.run = ({ tagInfo, requestInfo, reaction, requestAuthor, guildData, react
   const rolesToRemove = getRolesToRemove(requestAuthor, guildData, tagInfo.give_roles).map(
     role => message.guild.roles.cache.get(role) || null,
   );
+
   if (rolesToRemove.length > 0) {
     // Проверяем права бота на управление данными ролями
     if (rolesToRemove.some(role => !role || !role.editable)) {
@@ -107,26 +108,20 @@ exports.run = ({ tagInfo, requestInfo, reaction, requestAuthor, guildData, react
       return reaction.users.remove(reactedMember);
     }
 
-    // Проверка наличия ролей, которые надо снять
-    rolesToRemove.forEach(role =>
-      requestAuthor.roles.remove(role, '[Запрос роли | Cнятие прошлых ролей]').catch(() =>
-        sendErrorMessage({
-          message,
-          content: `произошла ошибка при попытке снятия роли '${role.name}'`,
-          member: reactedMember,
-          react: false,
-          messageType: guildData.give_role.message_type,
-        }),
-      ),
-    );
-  }
+    try {
+      // Проверка наличия ролей, которые надо снять
+      for (const role of rolesToRemove) {
+        requestAuthor.roles.remove(role, '[Запрос роли | Cнятие прошлых ролей]');
+      }
 
-  requestAuthor.roles
-    .add(
-      rolesToGive,
-      `[Запрос роли | Выдача ролей] ${reactedMember.displayName} [${reactedMember.id}] одобрил запрос`,
-    )
-    .then(() => {
+      // Выдача новых ролей
+      for (const role of rolesToGive) {
+        requestAuthor.roles.add(
+          role,
+          `[Запрос роли | Выдача ролей] ${reactedMember.displayName} [${reactedMember.id}] одобрил запрос`,
+        );
+      }
+
       message.channel.send(
         guildData.give_role.message_type === 'plain_text'
           ? // eslint-disable-next-line max-len
@@ -145,6 +140,7 @@ exports.run = ({ tagInfo, requestInfo, reaction, requestAuthor, guildData, react
                 )}"\`**`,
               ),
       );
+
       channel.send(
         guildData.give_role.message_type === 'plain_text'
           ? // eslint-disable-next-line max-len
@@ -163,18 +159,19 @@ exports.run = ({ tagInfo, requestInfo, reaction, requestAuthor, guildData, react
                   .join(', ')} с ником \`${requestInfo.user.nick_info[0].replace(/[`|"|*]/gi, '')}\`**`,
               ),
       );
+
       requestInfo.remove();
       return message.delete();
-    })
-    .catch(() =>
+    } catch (err) {
       sendErrorMessage({
         message,
         content: 'произошла ошибка при попытке выдачи ролей',
         member: reactedMember,
         react: false,
         messageType: guildData.give_role.message_type,
-      }),
-    );
+      });
+    }
+  }
 };
 
 function getRolesToRemove(member, guildData, rolesToSkip) {
