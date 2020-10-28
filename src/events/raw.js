@@ -2,22 +2,21 @@
 
 module.exports = async (client, packet) => {
   if (!['MESSAGE_REACTION_ADD', 'MESSAGE_REACTION_REMOVE'].includes(packet.t)) return;
+  const { d: data } = packet;
 
-  const channel = client.channels.cache.get(packet.d.channel_id);
-  if (!channel || channel.type === 'dm') return;
-  if (channel.messages.cache.has(packet.d.message_id)) return;
+  if (!client.channels.cache.get(data.channel_id)) return;
 
-  const message = await channel.messages.fetch(packet.d.message_id);
+  const channel = await client.channels.resolve(data.channel_id);
+  if (channel.messages.cache.has(data.message_id)) return;
 
-  const emoji = packet.d.emoji.id ? `${packet.d.emoji.name}:${packet.d.emoji.id}` : packet.d.emoji.name;
-
-  const reaction = message.reactions.cache.get(emoji);
-  if (!reaction) return;
+  const user = await client.users.fetch(data.user_id);
+  const message = await channel.messages.fetch(data.message_id);
+  const reaction = await message.reactions.resolve(data.emoji.id || data.emoji.name);
 
   if (packet.t === 'MESSAGE_REACTION_ADD') {
-    client.emit('messageReactionAdd', reaction, client.users.cache.get(packet.d.user_id));
+    client.emit('messageReactionAdd', reaction, user);
   }
   if (packet.t === 'MESSAGE_REACTION_REMOVE') {
-    client.emit('messageReactionRemove', reaction, client.users.cache.get(packet.d.user_id));
+    client.emit('messageReactionRemove', reaction, user);
   }
 };
