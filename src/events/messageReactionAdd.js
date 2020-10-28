@@ -4,6 +4,9 @@ const Guild = require('../models/Guild');
 const { onRunError } = require('../utils');
 
 module.exports = async (client, reaction, reactedUser) => {
+  // Если информация о реакции неполная, запросить больше
+  if (reaction.partial) await reaction.fetch();
+
   // Если автор бот - выходим
   if (reactedUser.bot) return;
 
