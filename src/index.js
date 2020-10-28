@@ -9,6 +9,9 @@ const Client = require('./structures/Client');
 
 const client = new Client({
   devs: ['422109629112254464', '395623202048704514'],
+  partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
+  messageCacheLifetime: 60,
+  messageSweepInterval: 120,
 });
 
 cachegoose(mongoose);

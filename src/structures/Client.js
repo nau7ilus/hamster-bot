@@ -13,7 +13,7 @@ require('../extensions/Message');
 
 module.exports = class AdvancedClient extends Client {
   constructor(options) {
-    super();
+    super(options);
     this.developers = options.devs;
     this.language = options.language || 'ru-RU';
     this.prefix = options.prefix || '/';
