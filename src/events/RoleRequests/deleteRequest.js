@@ -1,7 +1,7 @@
 'use strict';
 
 const { MessageEmbed } = require('discord.js');
-const { sendErrorMessage } = require('utils');
+const { sendErrorMessage } = require('../../utils');
 
 exports.run = ({ tagInfo, requestInfo, reaction, requestAuthor, guildData, reactedMember }) => {
   // Получим сообщение и эмодзи из реакции
