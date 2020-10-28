@@ -1,7 +1,7 @@
 'use strict';
 
-const { checkPermissions, missingPermsError } = require('utils');
-const RoleRequests = require('../models/RoleRequests');
+const RoleRequests = require('../../models/RoleRequests');
+const { checkPermissions, missingPermsError } = require('../../utils');
 
 /**
  * TODO: При выходе пользователя с сервера, убирать все его заявки в БД
@@ -15,7 +15,7 @@ exports.run = async ({ client, reaction, reactedUser, guildData }) => {
 
   // Получим сообщение и эмодзи из реакции
   const { message, emoji } = reaction;
-  const reactedMember = message.guild.member(reactedUser);
+  const reactedMember = await message.guild.members.fetch(reactedUser.id);
   if (!reactedMember) return;
 
   // Если автор сообщения не бот, выходим
@@ -47,7 +47,7 @@ exports.run = async ({ client, reaction, reactedUser, guildData }) => {
   const embedAuthorId = /(?<=<@.?)\d+(?=>)/.test(message.embeds[0].fields[0].value)
     ? message.embeds[0].fields[0].value.match(/(?<=<@.?)\d+(?=>)/)[0]
     : null;
-  const requestAuthor = message.guild.members.cache.find(m => m.id === embedAuthorId);
+  const requestAuthor = await message.guild.members.fetch(embedAuthorId);
 
   // Ищем запрос в базе данных
   const requestInfo = await RoleRequests.findOne({
