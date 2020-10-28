@@ -3,7 +3,7 @@
 const Piece = require('./Base/Piece');
 
 class Language extends Piece {
-  get(term, ...args) {
+  t(term, ...args) {
     if (!this.enabled && this !== this.store.default) return this.store.default.get(term, ...args);
     const phrase = this.phrases[term];
     switch (typeof phrase) {

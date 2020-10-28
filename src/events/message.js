@@ -11,7 +11,7 @@ module.exports = async (client, message) => {
   let guildData = isGuild ? await Guild.findOne({ id: message.guild.id }).cache() : null;
   if (isGuild && !guildData) guildData = await Guild.create({ id: message.guild.id });
 
-  message.language = message.getLanguage(guildData);
+  message.i18n = message.getLanguage(guildData);
 
   // Проверяем, включена ли система выдачи ролей
   if (guildData && guildData.give_role.is_enabled && guildData.give_role.trigger_words.length !== 0) {
