@@ -1,7 +1,7 @@
 'use strict';
 
 const { MessageEmbed } = require('discord.js');
-const { sendErrorMessage, checkPermissions, missingPermsError } = require('utils');
+const { sendErrorMessage, checkPermissions, missingPermsError } = require('../../utils');
 
 exports.run = ({ tagInfo, requestInfo, reaction, requestAuthor, guildData, reactedMember }) => {
   // Получим сообщение и эмодзи из реакции
