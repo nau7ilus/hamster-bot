@@ -1,7 +1,7 @@
 'use strict';
 
 const { MessageEmbed } = require('discord.js');
-const { sendErrorMessage } = require('utils');
+const { sendErrorMessage } = require('../../utils');
 
 exports.run = ({ tagInfo, requestInfo, reaction, requestAuthor, guildData, reactedMember }) => {
   const { message } = reaction;
@@ -19,7 +19,7 @@ exports.run = ({ tagInfo, requestInfo, reaction, requestAuthor, guildData, react
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);
   }
-
+  console.log(reactedMember);
   // Проверим права автора реакции
   if (
     tagInfo &&
@@ -106,7 +106,7 @@ exports.run = ({ tagInfo, requestInfo, reaction, requestAuthor, guildData, react
 
   editRequestMessage({
     message,
-    member: requestAuthor || `<@!${embedAuthorId}>`, // eslint-disable-line
+    member: requestAuthor,
     rolesToGive,
     channel,
     whatChanged,
