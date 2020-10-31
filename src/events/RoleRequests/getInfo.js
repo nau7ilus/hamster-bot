@@ -19,7 +19,7 @@ exports.run = ({ tagInfo, requestInfo, reaction, requestAuthor, guildData, react
     // Удалим реакцию пользователя
     return reaction.users.remove(reactedMember);
   }
-  console.log(reactedMember);
+
   // Проверим права автора реакции
   if (
     tagInfo &&
