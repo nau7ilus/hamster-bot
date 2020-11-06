@@ -20,7 +20,7 @@ exports.getGuildData = async (req, res) => {
     }
 
     // Поиск пользователя на данном сервере
-    const fetchedMember = fetchedGuild.members.cache.get(req.userData.id);
+    const fetchedMember = await fetchedGuild.members.fetch(req.userData.id);
     if (!fetchedMember) {
       res.code(400).send({ error: 'Пользователя нет на сервере' });
       return;
@@ -75,7 +75,7 @@ exports.changeGuildData = async (req, res) => {
     }
 
     // Поиск пользователя на данном сервере
-    const fetchedMember = fetchedGuild.members.cache.get(req.userData.id);
+    const fetchedMember = await fetchedGuild.members.fetch(req.userData.id);
     if (!fetchedMember) {
       res.code(400).send({ error: 'Пользователя нет на сервере' });
       return;
