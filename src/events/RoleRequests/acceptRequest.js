@@ -80,11 +80,7 @@ exports.run = async ({ tagInfo, requestInfo, reaction, requestAuthor, guildData,
     }
 
     // Проверка прав в канале для отправки сообщения
-    const missingPerms = checkPermissions(
-      channel,
-      ['SEND_MESSAGES', 'EMBED_LINKS', 'VIEW_CHANNEL'],
-      message.guild.me,
-    );
+    const missingPerms = checkPermissions(channel, ['SEND_MESSAGES', 'EMBED_LINKS', 'VIEW_CHANNEL'], message.guild.me);
     if (missingPerms.length > 0) return missingPermsError({ message, missingPerms, channel, react: false });
 
     // Проверяем роли, которые необходимо снять

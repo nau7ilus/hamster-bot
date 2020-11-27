@@ -54,11 +54,7 @@ exports.run = ({ tagInfo, requestInfo, reaction, requestAuthor, guildData, react
   }
 
   // Проверяем права бота в канале для отправки сообщения
-  const missingPerms = checkPermissions(
-    channel,
-    ['SEND_MESSAGES', 'EMBED_LINKS', 'VIEW_CHANNEL'],
-    message.guild.me,
-  );
+  const missingPerms = checkPermissions(channel, ['SEND_MESSAGES', 'EMBED_LINKS', 'VIEW_CHANNEL'], message.guild.me);
   if (missingPerms.length > 0) return missingPermsError({ message, missingPerms, channel, react: false });
 
   // Отклоняем запрос
@@ -84,9 +80,7 @@ exports.run = ({ tagInfo, requestInfo, reaction, requestAuthor, guildData, react
     guildData.give_role.message_type === 'plain_text'
       ? // eslint-disable-next-line max-len
         `**\`[❌ | Отклонение]\` ${requestAuthor},\` модератор \`${reactedMember} \`отклонил ваш запрос на получение роли "${requestInfo.role_to_give
-          .map(role =>
-            message.guild.roles.cache.get(role) ? message.guild.roles.cache.get(role).name : 'Не найдено',
-          )
+          .map(role => (message.guild.roles.cache.get(role) ? message.guild.roles.cache.get(role).name : 'Не найдено'))
           .join(', ')}" с ником "${requestInfo.user.nick_info[0].replace(/[`|"|*]/gi, '')}"\`**`
       : new MessageEmbed()
           .setColor('#e34536')

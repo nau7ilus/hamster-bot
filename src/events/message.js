@@ -19,9 +19,7 @@ module.exports = async (client, message) => {
     let systemTrigger = new RegExp(`^(?:${guildData.give_role.trigger_words.join('|')})$`, 'gi');
     if (systemTrigger.test(message.content)) {
       const createRequest = client.commands.find(c => c.name === 'supersecretcommand') || null;
-      createRequest
-        .run({ client, message, guildData })
-        .catch(warning => onRunError({ warning, client, message }));
+      createRequest.run({ client, message, guildData }).catch(warning => onRunError({ warning, client, message }));
       return;
     }
   }
@@ -41,9 +39,7 @@ module.exports = async (client, message) => {
   const cmdName = args[0].toLowerCase().normalize();
   args.shift();
 
-  const cmd = client.commands.find(
-    c => c.name === cmdName || (c.aliases && c.aliases.includes(cmdName)) || null,
-  );
+  const cmd = client.commands.find(c => c.name === cmdName || (c.aliases && c.aliases.includes(cmdName)) || null);
 
   // Если команда есть в БД
   if (cmd && !!thisPrefix) {
@@ -59,9 +55,7 @@ module.exports = async (client, message) => {
         '[Message] %s попытался использовать команду для разработчиков %s %s',
         message.author.tag,
         cmd.name,
-        message.guild
-          ? `на сервере ${message.guild.name} в канале ${message.channel.name}`
-          : `в личных сообщениях`,
+        message.guild ? `на сервере ${message.guild.name} в канале ${message.channel.name}` : `в личных сообщениях`,
       );
       return;
     }
@@ -88,9 +82,7 @@ module.exports = async (client, message) => {
       // Логируем использование команды
       console.log(
         `[Message] ${message.author.tag} использовал команду ${cmd.name} ${
-          message.guild
-            ? `на сервере ${message.guild.name} в канале ${message.channel.name}`
-            : `в личных сообщениях`
+          message.guild ? `на сервере ${message.guild.name} в канале ${message.channel.name}` : `в личных сообщениях`
         }`,
       );
 

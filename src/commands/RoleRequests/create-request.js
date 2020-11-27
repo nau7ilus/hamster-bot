@@ -31,8 +31,7 @@ module.exports = class extends Command {
       return arr;
     };
     if (
-      (checkChannel().includes('require') &&
-        !requestSettings.require.channels.includes(message.channel.id)) ||
+      (checkChannel().includes('require') && !requestSettings.require.channels.includes(message.channel.id)) ||
       (checkChannel().includes('banned') && requestSettings.banned.channels.includes(message.channel.id))
     ) {
       return sendErrorMessage({
@@ -114,9 +113,7 @@ module.exports = class extends Command {
     }
 
     // Ищем тег пользователя в базе данных
-    const tagInfo = requestSettings.tags
-      ? requestSettings.tags.find(tag => tag.names.includes(nickInfo[1]))
-      : null;
+    const tagInfo = requestSettings.tags ? requestSettings.tags.find(tag => tag.names.includes(nickInfo[1])) : null;
 
     // Если указанного тега нет, отправить сообщение об ошибке
     if (!tagInfo) {

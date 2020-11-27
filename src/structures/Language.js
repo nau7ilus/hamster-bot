@@ -11,9 +11,10 @@ class Language extends Piece {
         return phrase(...args);
       case 'undefined':
         if (this === this.store.default) return this.phrases.DEFAULT(term);
-        return `${this.phrases.DEFAULT(term)}\n\n**${
-          this.phrases.DEFAULT_LANGUAGE
-        }:**\n${this.store.default.get(term, ...args)}`;
+        return `${this.phrases.DEFAULT(term)}\n\n**${this.phrases.DEFAULT_LANGUAGE}:**\n${this.store.default.get(
+          term,
+          ...args,
+        )}`;
       default:
         return phrase;
     }
