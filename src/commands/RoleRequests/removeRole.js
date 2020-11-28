@@ -39,7 +39,7 @@ module.exports = class extends Command {
         message.member.roles.cache.some(r => t.manage_roles.includes(r.id)),
     );
 
-    if (rolesToRemove.length === 0) {
+    if (rolesCanRemove.length === 0) {
       message.react('⚠️');
       return message.channel
         .send(
