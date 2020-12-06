@@ -134,8 +134,15 @@ module.exports = class extends Command {
       });
     }
 
+    const giveRoles =
+      tagInfo.village && message.guild.id === '527799726557364237'
+        ? message.member.roles.some(r => r.id === '695387222819471380')
+          ? [tagInfo.give_roles[0]]
+          : [tagInfo.give_roles[1]]
+        : tagInfo.give_roles;
+
     // Проверим, есть ли у пользователя уже роли, которые предусматривает тег
-    if (checkUserRoles(message.member, tagInfo.give_roles)) {
+    if (checkUserRoles(message.member, giveRoles)) {
       return sendErrorMessage({
         message,
         member: message.member,
@@ -188,7 +195,7 @@ module.exports = class extends Command {
             },
             {
               name: `**Роли для выдачи**`,
-              value: `**${tagInfo.give_roles.map(r => `<@&${r}>`).join('\n')}**`,
+              value: `**${giveRoles.map(r => `<@&${r}>`).join('\n')}**`,
               inline: true,
             },
             { name: `**Канал отправки**`, value: `**${message.channel}**`, inline: true },
@@ -217,7 +224,7 @@ module.exports = class extends Command {
           },
           guild_id: message.guild.id,
           requested_channel: message.channel.id,
-          role_to_give: tagInfo.give_roles,
+          role_to_give: giveRoles,
         });
       });
 
