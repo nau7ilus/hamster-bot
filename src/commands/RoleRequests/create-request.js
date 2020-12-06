@@ -136,7 +136,7 @@ module.exports = class extends Command {
 
     const giveRoles =
       tagInfo.village && message.guild.id === '527799726557364237'
-        ? message.member.roles.some(r => r.id === '695387222819471380')
+        ? message.member.roles.cache.some(r => r.id === '695387222819471380')
           ? [tagInfo.give_roles[0]]
           : [tagInfo.give_roles[1]]
         : tagInfo.give_roles;
@@ -190,7 +190,7 @@ module.exports = class extends Command {
             { name: `**Пользователь**`, value: `**${message.member}**`, inline: true },
             {
               name: `**Никнейм**`,
-              value: `**${nickInfo[0].replace(/[`|*]/gi, '')}**`,
+              value: `**${nickInfo[0].replace(/[`*]/gi, '')}**`,
               inline: true,
             },
             {
@@ -201,20 +201,20 @@ module.exports = class extends Command {
             { name: `**Канал отправки**`, value: `**${message.channel}**`, inline: true },
             {
               name: `**Информация по выдаче**`,
-              value:
-                '**`[✅] - выдать роль\n' +
-                '[❌] - отказать в выдачи роли\n' +
-                '[🔎] - проверить информацию\n' +
-                '[🗑️] - удалить сообщение`**',
+              value: `**\`[✅] - выдать роль\n[❌] - отказать в выдачи роли\n${
+                message.guild.id === '527799726557364237' ? '' : '[🔎] - проверить информацию\n'
+              }[🗑️] - удалить сообщение\`**`,
             },
           ),
       )
       .then(async msg => {
         await msg.react(`✅`);
         await msg.react(`❌`);
-        await msg.react(`🔎`);
+        if (message.guild.id !== '527799726557364237') {
+          await msg.react(`🔎`);
+        }
         await msg.react(`🗑️`);
-        msg.pin();
+        // msg.pin();
 
         // Сохраняем информацию о запросе в базу данных
         await RoleRequests.create({
