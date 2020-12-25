@@ -214,7 +214,7 @@ module.exports = class extends Command {
           await msg.react(`🔎`);
         }
         await msg.react(`🗑️`);
-        // msg.pin();
+        msg.pin();
 
         // Сохраняем информацию о запросе в базу данных
         await RoleRequests.create({

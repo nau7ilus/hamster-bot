@@ -40,7 +40,12 @@ exports.run = async ({ tagInfo, requestInfo, reaction, requestAuthor, guildData,
     }
 
     const channel = message.guild.channels.cache.get(requestInfo.requested_channel) || null;
-    const rolesToGive = tagInfo.give_roles.map(role => message.guild.roles.cache.get(role) || null);
+    const rolesToGive =
+      tagInfo.village && message.guild.id === '527799726557364237'
+        ? message.member.roles.cache.some(r => r.id === '695387222819471380')
+          ? [message.guild.roles.cache.get(tagInfo.give_roles[0])]
+          : [message.guild.roles.cache.get(tagInfo.give_roles[1])]
+        : tagInfo.give_roles.map(role => message.guild.roles.cache.get(role) || null);
 
     // Если роли для выдачи не найдены
     if (!rolesToGive || rolesToGive.some(role => !role)) {
