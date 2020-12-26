@@ -54,12 +54,15 @@ module.exports = class extends Command {
     } else if (rolesCanRemove.length > 1) {
       this.selectRoles(message, mentionedMember, rolesCanRemove);
     } else {
-      this.removeRoles(
-        message,
-        message.member,
-        mentionedMember,
-        Array.from(new Set(rolesCanRemove.flatMap(t => t.give_roles))),
+      const roles = rolesCanRemove.flatMap(t =>
+        message.guild.id === '527799726557364237' && t.village
+          ? mentionedMember.roles.cache.some(r => r.id === '695387222819471380')
+            ? t.give_roles[0]
+            : t.give_roles[1]
+          : t.give_roles,
       );
+
+      this.removeRoles(message, message.member, mentionedMember, Array.from(new Set(roles)));
     }
   }
 
