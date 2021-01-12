@@ -26,7 +26,15 @@ const GuildSchema = new Schema(
       },
       trigger_words: Array,
       requests_channel: String,
-      tags: [{ names: Array, give_roles: Array, manage_roles: Array, village: { type: Boolean, default: false } }],
+      tags: [
+        {
+          names: Array,
+          give_roles: Array,
+          manage_roles: Array,
+          mention: Array,
+          village: { type: Boolean, default: false },
+        },
+      ],
     },
 
     commands: {
