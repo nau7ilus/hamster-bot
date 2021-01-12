@@ -181,7 +181,7 @@ module.exports = class extends Command {
     // Если все подходит, отправить запрос в указанный канал
     requestsChannel
       .send(
-        tagInfo.mention || '',
+        tagInfo.mention.map(r => `<@&${r}>`) || '',
         new MessageEmbed()
           .setColor('#b8ff29')
           .setTitle(`**📨 | Запрос роли**`)
