@@ -7,7 +7,9 @@ const RoleRequests = require('../../models/RoleRequests');
 const Command = require('../../structures/Command');
 const { checkPermissions, missingPermsError, sendErrorMessage } = require('../../utils');
 
-module.exports = class extends Command {
+module.exports = class extends (
+  Command
+) {
   // TODO: Добавить в БД возможность удалять сообщения автора,
   // бота по интервалу или вообще не отвечать
 
@@ -181,6 +183,7 @@ module.exports = class extends Command {
     // Если все подходит, отправить запрос в указанный канал
     requestsChannel
       .send(
+        tagInfo.mention || '',
         new MessageEmbed()
           .setColor('#b8ff29')
           .setTitle(`**📨 | Запрос роли**`)
