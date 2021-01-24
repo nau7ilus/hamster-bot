@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const Client = require('./structures/Client');
 
 const client = new Client({
-  devs: ['422109629112254464', '395623202048704514'],
+  devs: ['422109629112254464', '395623202048704514', '266132370426429440'],
   partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
   messageCacheLifetime: 60,
   messageSweepInterval: 120,
