@@ -31,7 +31,7 @@ mongoose.connect(
 
 
 // Заменить загрузку ивентов под новый хендлер
-client.login();
-client.loadEvents().initializeHTTPServer();
+//client.login();
+//client.loadEvents().initializeHTTPServer();
 
 module.exports = client;
