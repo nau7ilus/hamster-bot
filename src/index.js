@@ -29,6 +29,7 @@ mongoose.connect(
   },
 );
 
+
 // Заменить загрузку ивентов под новый хендлер
 client.login();
 client.loadEvents().initializeHTTPServer();
